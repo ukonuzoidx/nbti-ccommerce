@@ -13,9 +13,8 @@ export async function loadProducts() {
   try {
     const { data } = await axios.get(
       //   `${CONSTANTS.URL}/api/products`
-      `http://127.0.0.1:8000/api/products`
+      `https://nbti.globalfood-s.com/public/api/products`
     );
-
 
     return data;
   } catch (error) {
@@ -30,7 +29,7 @@ export async function loadProductDetails(productId) {
   try {
     const { data } = await axios.get(
       //   `${CONSTANTS.URL}/api/products/details/${productId}`
-      `http://127.0.0.1:8000/api/products/details/${productId}`
+      `https://nbti.globalfood-s.com/public/api/products/details/${productId}`
     );
 
     return data;

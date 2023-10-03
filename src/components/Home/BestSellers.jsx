@@ -15,11 +15,11 @@ export default function BestSellers({ className, category }) {
               {/* <Image
                 layout="fill"
                 objectFit="scale-down"
-                src={`'http://127.0.0.1:8000/images/category/${cat.image}'`}
+                src={`'https://nbti.globalfood-s.com/public/images/category/${cat.image}'`}
                 alt=""
               /> */}
               <img
-                src={`http://127.0.0.1:8000/images/category/${cat.image}`}
+                src={`https://nbti.globalfood-s.com/public/images/category/${cat.image}`}
                 alt={cat.title["en"]}
                 className="w-full h-[300px] object-cover"
               />

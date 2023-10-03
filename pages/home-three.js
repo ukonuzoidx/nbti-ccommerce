@@ -4,7 +4,10 @@ import HomeThree from "../src/components/HomeThree";
 function HomeThreePage() {
     return (
         <>
-            <HomeThree/>
+            {/* <HomeThree/> */}
+             <div>
+Hello HomeThree
+                </div>;
         </>
     );
 }

@@ -12,7 +12,7 @@ export const sellingProducts = createAsyncThunk(
   async () => {
     const response = await axios;
     return axios
-      .get("http://127.0.0.1:8000/api/products/selling")
+      .get("https://nbti.globalfood-s.com/public/api/products/selling")
       .then((response) => response.data.data);
   }
 );
