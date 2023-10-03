@@ -122,7 +122,7 @@ export default function CampaignCountDown({
                     MOBILE APP VERSION
                   </p>
                   <h1 className="text-[30px] font-600 text-qblack leading-10 mb-8">
-                    Get Our
+                    Coming Soon
                     <span className="text-qred border-b-2 border-qred mx-2">
                       Mobile App
                     </span>
