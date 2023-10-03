@@ -58,7 +58,7 @@ export default function TopBar({ className }) {
                   </div>
                 </div> */}
                 <div className="currency-select flex space-x-1 items-center">
-                  <Selectbox className="w-fit" datas={["USD", "NGN"]} />
+                  <Selectbox className="w-fit" datas={["NGN"]} />
                   <Arrow className="fill-current qblack" />
                 </div>
                 {/* <div className="language-select flex space-x-1 items-center">

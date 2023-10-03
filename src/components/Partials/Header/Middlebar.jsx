@@ -1,7 +1,5 @@
 import Link from "next/link";
 import Cart from "../../Cart";
-import SearchBox from "../../Helpers/SearchBox";
-import Compair from "../../Helpers/icons/Compair";
 import ThinBag from "../../Helpers/icons/ThinBag";
 import ThinLove from "../../Helpers/icons/ThinLove";
 import ThinPeople from "../../Helpers/icons/ThinPeople";
@@ -43,10 +41,10 @@ export default function Middlebar({ className, type }) {
               )}
             </div>
             <div className="w-[517px] h-[44px]">
-              <SearchBox type={type} className="search-com" />
+              {/* <SearchBox type={type} className="search-com" /> */}
             </div>
             <div className="flex space-x-6 items-center">
-              <div className="compaire relative">
+              {/* <div className="compaire relative">
                 <Link href="/products-compaire" passHref>
                   <a rel="noopener noreferrer">
                     <span>
@@ -56,12 +54,12 @@ export default function Middlebar({ className, type }) {
                 </Link>
                 <span
                   className={`w-[18px] h-[18px] rounded-full  absolute -top-2.5 -right-2.5 flex justify-center items-center text-[9px] ${
-                    type === 3 ? "bg-qh3-blue text-white" : "bg-qprimary"
+                    type === 3 ? "bg-qprimary text-white" : "bg-qprimary"
                   }`}
                 >
                   2
                 </span>
-              </div>
+              </div> */}
               <div className="favorite relative">
                 <Link href="/wishlist" passHref>
                   <a rel="noopener noreferrer">
@@ -72,7 +70,7 @@ export default function Middlebar({ className, type }) {
                 </Link>
                 <span
                   className={`w-[18px] h-[18px] rounded-full  absolute -top-2.5 -right-2.5 flex justify-center items-center text-[9px] ${
-                    type === 3 ? "bg-qh3-blue text-white" : "bg-qprimary"
+                    type === 3 ? "bg-qprimary text-white" : "bg-qprimary"
                   }`}
                 >
                   1
@@ -89,7 +87,7 @@ export default function Middlebar({ className, type }) {
                   </Link>
                   <span
                     className={`w-[18px] h-[18px] rounded-full  absolute -top-2.5 -right-2.5 flex justify-center items-center text-[9px] ${
-                      type === 3 ? "bg-qh3-blue text-white" : "bg-qprimary"
+                      type === 3 ? "bg-qprimary text-white" : "bg-qprimary"
                     }`}
                   >
                     15

@@ -1,21 +1,41 @@
-import datas from "../../data/products.json";
 import SectionStyleFour from "../Helpers/SectionStyleFour";
+import SectionStyleOneHmThree from "../Helpers/SectionStyleOneHmThree";
 import SectionStyleThree from "../Helpers/SectionStyleThree";
 import SectionStyleTwo from "../Helpers/SectionStyleTwo";
 import ViewMoreTitle from "../Helpers/ViewMoreTitle";
+import LayoutHomeThree from "../Partials/LayoutHomeThree";
 import Banner from "./Banner";
 import BrandSection from "./BrandSection";
 import CampaignCountDown from "./CampaignCountDown";
 import ProductsAds from "./ProductsAds";
-import LayoutHomeThree from "../Partials/LayoutHomeThree";
-import SectionStyleOneHmThree from "../Helpers/SectionStyleOneHmThree";
+
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchProducts } from "../../../backend/reducers/prdouctSlice";
+import { sellingProducts } from "../../../backend/reducers/sProductReducer";
 
 export default function HomeThree() {
-  const { products } = datas;
+  // const { products } = datas;
+  const dispatch = useDispatch();
+
+  const products = useSelector((state) => state.product.products);
+  const sProducts = useSelector((state) => state.sProduct.sProducts);
+
+  console.log(sProducts);
+
+  // select any 6 category
+  const categoryLength = 6;
+  const categories = useSelector((state) => state.category.category);
+  const category = categories.slice(0, categoryLength);
+
+  useEffect(() => {
+    dispatch(fetchProducts());
+    dispatch(sellingProducts());
+  }, []);
   const brands = [];
-  products.forEach((product) => {
-    brands.push(product.brand);
-  });
+  // products.forEach((product) => {
+  //   brands.push(product.brand);
+  // });
   return (
     <>
       <LayoutHomeThree type={3} childrenClasses="pt-0">
@@ -59,10 +79,7 @@ export default function HomeThree() {
         </ViewMoreTitle>
 
         <ProductsAds
-          ads={[
-            `/assets/images/ads-1.png`,
-            `/assets/images/ads-2.png`,
-          ]}
+          ads={[`/assets/images/ads-1.png`, `/assets/images/ads-2.png`]}
           sectionHeight="sm:h-[295px] h-full"
           className="products-ads-section mb-[60px]"
         />

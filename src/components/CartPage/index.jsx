@@ -66,7 +66,7 @@ export default function CardPage({ cart = true }) {
                       <p className="text-[15px] font-medium text-qblack">
                         Subtotal
                       </p>
-                      <p className="text-[15px] font-medium text-qred">$365</p>
+                      <p className="text-[15px] font-medium text-qred">₦365</p>
                     </div>
                     <div className="w-full h-[1px] bg-[#EDEDED]"></div>
                   </div>
@@ -90,7 +90,7 @@ export default function CardPage({ cart = true }) {
                             </span>
                           </div>
                           <span className="text-[13px] text-normal text-qgraytwo">
-                            +$00.00
+                            +₦00.00
                           </span>
                         </div>
                       </li>
@@ -109,7 +109,7 @@ export default function CardPage({ cart = true }) {
                             </span>
                           </div>
                           <span className="text-[13px] text-normal text-qgraytwo">
-                            +$00.00
+                            +₦00.00
                           </span>
                         </div>
                       </li>
@@ -128,7 +128,7 @@ export default function CardPage({ cart = true }) {
                             </span>
                           </div>
                           <span className="text-[13px] text-normal text-qgraytwo">
-                            +$00.00
+                            +₦00.00
                           </span>
                         </div>
                       </li>
@@ -177,7 +177,7 @@ export default function CardPage({ cart = true }) {
                       <p className="text-[18px] font-medium text-qblack">
                         Total
                       </p>
-                      <p className="text-[18px] font-medium text-qred">$365</p>
+                      <p className="text-[18px] font-medium text-qred">₦365</p>
                     </div>
                   </div>
                   <Link href="/checkout">

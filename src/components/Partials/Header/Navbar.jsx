@@ -37,7 +37,7 @@ export default function Navbar({ className, type }) {
   return (
     <div
       className={`nav-widget-wrapper w-full  h-[60px] relative z-30 ${
-        type === 3 ? "bg-qh3-blue" : "bg-qprimary"
+        type === 3 ? "bg-qprimary" : "bg-qprimary"
       }  ${className || ""}`}
     >
       <div className="container-x mx-auto h-full">
@@ -90,21 +90,19 @@ export default function Navbar({ className, type }) {
                   <ul className="categories-list">
                     {category.map((item) => (
                       <li key={item.id} className="category-item">
-                        <Link href="/all-products">
+                        {/* <Link href=> */}
+                        <Link href={`/categories/${item.id}`}>
                           <div
                             className={`flex justify-between items-center px-5 h-10 bg-white  transition-all duration-300 ease-in-out cursor-pointer text-qblack ${
                               type === 3
-                                ? "hover:bg-qh3-blue hover:text-white"
+                                ? "hover:bg-qprimary hover:text-white"
                                 : "hover:bg-qprimary"
                             }`}
                           >
                             <div className="flex items-center space-x-6">
-                              <span>
-                                {/* font awesome icon */}
-
-                              </span>
+                              <span>{/* font awesome icon */}</span>
                               <span className="text-xs font-400">
-                               {item.title['en']}
+                                {item.title["en"]}
                               </span>
                             </div>
                             <div>
@@ -188,7 +186,7 @@ export default function Navbar({ className, type }) {
                                     <span
                                       className={`text-qgray text-sm font-400 border-b border-transparent cursor-pointer   ${
                                         type === 3
-                                          ? "hover:text-qh3-blue hover:border-qh3-blue"
+                                          ? "hover:text-qprimary hover:border-qprimary"
                                           : "hover:text-qyellow hover:border-qyellow"
                                       }`}
                                     >
@@ -201,7 +199,7 @@ export default function Navbar({ className, type }) {
                                     <span
                                       className={`text-qgray text-sm font-400 border-b border-transparent cursor-pointer   ${
                                         type === 3
-                                          ? "hover:text-qh3-blue hover:border-qh3-blue"
+                                          ? "hover:text-qprimary hover:border-qprimary"
                                           : "hover:text-qyellow hover:border-qyellow"
                                       }`}
                                     >
@@ -214,7 +212,7 @@ export default function Navbar({ className, type }) {
                                     <span
                                       className={`text-qgray text-sm font-400 border-b border-transparent cursor-pointer   ${
                                         type === 3
-                                          ? "hover:text-qh3-blue hover:border-qh3-blue"
+                                          ? "hover:text-qprimary hover:border-qprimary"
                                           : "hover:text-qyellow hover:border-qyellow"
                                       }`}
                                     >
@@ -227,7 +225,7 @@ export default function Navbar({ className, type }) {
                                     <span
                                       className={`text-qgray text-sm font-400 border-b border-transparent cursor-pointer   ${
                                         type === 3
-                                          ? "hover:text-qh3-blue hover:border-qh3-blue"
+                                          ? "hover:text-qprimary hover:border-qprimary"
                                           : "hover:text-qyellow hover:border-qyellow"
                                       }`}
                                     >
@@ -240,7 +238,7 @@ export default function Navbar({ className, type }) {
                                     <span
                                       className={`text-qgray text-sm font-400 border-b border-transparent cursor-pointer   ${
                                         type === 3
-                                          ? "hover:text-qh3-blue hover:border-qh3-blue"
+                                          ? "hover:text-qprimary hover:border-qprimary"
                                           : "hover:text-qyellow hover:border-qyellow"
                                       }`}
                                     >
@@ -264,7 +262,7 @@ export default function Navbar({ className, type }) {
                                     <span
                                       className={`text-qgray text-sm font-400 border-b border-transparent cursor-pointer   ${
                                         type === 3
-                                          ? "hover:text-qh3-blue hover:border-qh3-blue"
+                                          ? "hover:text-qprimary hover:border-qprimary"
                                           : "hover:text-qyellow hover:border-qyellow"
                                       }`}
                                     >
@@ -277,7 +275,7 @@ export default function Navbar({ className, type }) {
                                     <span
                                       className={`text-qgray text-sm font-400 border-b border-transparent cursor-pointer   ${
                                         type === 3
-                                          ? "hover:text-qh3-blue hover:border-qh3-blue"
+                                          ? "hover:text-qprimary hover:border-qprimary"
                                           : "hover:text-qyellow hover:border-qyellow"
                                       }`}
                                     >
@@ -290,7 +288,7 @@ export default function Navbar({ className, type }) {
                                     <span
                                       className={`text-qgray text-sm font-400 border-b border-transparent cursor-pointer   ${
                                         type === 3
-                                          ? "hover:text-qh3-blue hover:border-qh3-blue"
+                                          ? "hover:text-qprimary hover:border-qprimary"
                                           : "hover:text-qyellow hover:border-qyellow"
                                       }`}
                                     >
@@ -303,7 +301,7 @@ export default function Navbar({ className, type }) {
                                     <span
                                       className={`text-qgray text-sm font-400 border-b border-transparent cursor-pointer   ${
                                         type === 3
-                                          ? "hover:text-qh3-blue hover:border-qh3-blue"
+                                          ? "hover:text-qprimary hover:border-qprimary"
                                           : "hover:text-qyellow hover:border-qyellow"
                                       }`}
                                     >
@@ -327,7 +325,7 @@ export default function Navbar({ className, type }) {
                                     <span
                                       className={`text-qgray text-sm font-400 border-b border-transparent cursor-pointer   ${
                                         type === 3
-                                          ? "hover:text-qh3-blue hover:border-qh3-blue"
+                                          ? "hover:text-qprimary hover:border-qprimary"
                                           : "hover:text-qyellow hover:border-qyellow"
                                       }`}
                                     >
@@ -340,7 +338,7 @@ export default function Navbar({ className, type }) {
                                     <span
                                       className={`text-qgray text-sm font-400 border-b border-transparent cursor-pointer   ${
                                         type === 3
-                                          ? "hover:text-qh3-blue hover:border-qh3-blue"
+                                          ? "hover:text-qprimary hover:border-qprimary"
                                           : "hover:text-qyellow hover:border-qyellow"
                                       }`}
                                     >
@@ -353,7 +351,7 @@ export default function Navbar({ className, type }) {
                                     <span
                                       className={`text-qgray text-sm font-400 border-b border-transparent cursor-pointer   ${
                                         type === 3
-                                          ? "hover:text-qh3-blue hover:border-qh3-blue"
+                                          ? "hover:text-qprimary hover:border-qprimary"
                                           : "hover:text-qyellow hover:border-qyellow"
                                       }`}
                                     >
@@ -366,7 +364,7 @@ export default function Navbar({ className, type }) {
                                     <span
                                       className={`text-qgray text-sm font-400 border-b border-transparent cursor-pointer   ${
                                         type === 3
-                                          ? "hover:text-qh3-blue hover:border-qh3-blue"
+                                          ? "hover:text-qprimary hover:border-qprimary"
                                           : "hover:text-qyellow hover:border-qyellow"
                                       }`}
                                     >
@@ -418,7 +416,7 @@ export default function Navbar({ className, type }) {
                                     <span
                                       className={`text-qgray text-sm font-400 border-b border-transparent cursor-pointer   ${
                                         type === 3
-                                          ? "hover:text-qh3-blue hover:border-qh3-blue"
+                                          ? "hover:text-qprimary hover:border-qprimary"
                                           : "hover:text-qyellow hover:border-qyellow"
                                       }`}
                                     >
@@ -431,7 +429,7 @@ export default function Navbar({ className, type }) {
                                     <span
                                       className={`text-qgray text-sm font-400 border-b border-transparent cursor-pointer   ${
                                         type === 3
-                                          ? "hover:text-qh3-blue hover:border-qh3-blue"
+                                          ? "hover:text-qprimary hover:border-qprimary"
                                           : "hover:text-qyellow hover:border-qyellow"
                                       }`}
                                     >
@@ -444,7 +442,7 @@ export default function Navbar({ className, type }) {
                                     <span
                                       className={`text-qgray text-sm font-400 border-b border-transparent cursor-pointer   ${
                                         type === 3
-                                          ? "hover:text-qh3-blue hover:border-qh3-blue"
+                                          ? "hover:text-qprimary hover:border-qprimary"
                                           : "hover:text-qyellow hover:border-qyellow"
                                       }`}
                                     >
@@ -457,7 +455,7 @@ export default function Navbar({ className, type }) {
                                     <span
                                       className={`text-qgray text-sm font-400 border-b border-transparent cursor-pointer   ${
                                         type === 3
-                                          ? "hover:text-qh3-blue hover:border-qh3-blue"
+                                          ? "hover:text-qprimary hover:border-qprimary"
                                           : "hover:text-qyellow hover:border-qyellow"
                                       }`}
                                     >
@@ -470,7 +468,7 @@ export default function Navbar({ className, type }) {
                                     <span
                                       className={`text-qgray text-sm font-400 border-b border-transparent cursor-pointer   ${
                                         type === 3
-                                          ? "hover:text-qh3-blue hover:border-qh3-blue"
+                                          ? "hover:text-qprimary hover:border-qprimary"
                                           : "hover:text-qyellow hover:border-qyellow"
                                       }`}
                                     >

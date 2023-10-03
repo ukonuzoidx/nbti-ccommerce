@@ -2,17 +2,13 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchProducts } from "../../../backend/reducers/prdouctSlice";
 import { sellingProducts } from "../../../backend/reducers/sProductReducer";
-import SectionStyleFour from "../Helpers/SectionStyleFour";
 import SectionStyleOne from "../Helpers/SectionStyleOne";
 import SectionStyleThree from "../Helpers/SectionStyleThree";
-import SectionStyleTwo from "../Helpers/SectionStyleTwo";
 import ViewMoreTitle from "../Helpers/ViewMoreTitle";
-import Layout from "../Partials/Layout";
-import Ads from "./Ads";
+import LayoutHomeThree from "../Partials/LayoutHomeThree";
 import Banner from "./Banner";
 import BestSellers from "./BestSellers";
 import CampaignCountDown from "./CampaignCountDown";
-import ProductsAds from "./ProductsAds";
 
 export default function Home() {
   const dispatch = useDispatch();
@@ -43,9 +39,9 @@ export default function Home() {
   }, []);
   return (
     <>
-      <Layout>
-        {ads && <Ads handler={adsHandle} />}
+      <LayoutHomeThree type={3} childrenClasses="pt-0">
         <Banner className="banner-wrapper mb-[60px]" />
+        {/* {ads && <Ads handler={adsHandle} />} */}
         <SectionStyleOne
           products={products}
           brands={brands}
@@ -107,8 +103,7 @@ export default function Home() {
           ads={[`/images/ads-4.png`]}
           className="products-ads-section mb-[60px]"
         /> */}
-       
-      </Layout>
+      </LayoutHomeThree>
     </>
   );
 }

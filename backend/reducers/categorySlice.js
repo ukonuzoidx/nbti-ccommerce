@@ -12,7 +12,7 @@ export const fetchCategory = createAsyncThunk(
   async () => {
     const response = await axios;
     return axios
-      .get("https://nbti.globalfood-s.com/public/api/categories")
+      .get("http://127.0.0.1:8000/api/categories")
       .then((response) => response.data.data);
   }
 );

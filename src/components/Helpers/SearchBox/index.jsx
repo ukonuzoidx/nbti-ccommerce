@@ -1,4 +1,4 @@
-export default function SearchBox({ className,type }) {
+export default function SearchBox({ className,type, categories }) {
   return (
       <>
         <div
