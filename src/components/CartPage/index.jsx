@@ -1,190 +1,157 @@
 import BreadcrumbCom from "../BreadcrumbCom";
 import EmptyCardError from "../EmptyCardError";
-import InputCom from "../Helpers/InputCom";
 import PageTitle from "../Helpers/PageTitle";
-import Layout from "../Partials/Layout";
 import ProductsTable from "./ProductsTable";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import auth from "../../../utils/auth";
+import apiRequest from "../../../utils/apiRequest";
+import { toast } from "react-toastify";
+import { fetchCart } from "../../store/Cart";
 import Link from "next/link";
+import isAuth from "../../../Middleware/isAuth";
+import languageModel from "../../../utils/languageModel";
 
-export default function CardPage({ cart = true }) {
+function CardPage() {
+  const dispatch = useDispatch();
+  const { cart } = useSelector((state) => state.cart);
+  const [getCarts, setGetCarts] = useState(null);
+  const [langCntnt, setLangCntnt] = useState(null);
+  useEffect(() => {
+    setLangCntnt(languageModel());
+  }, []);
+  const deleteItem = (id) => {
+    if (auth()) {
+      apiRequest
+        .deleteCartItem({
+          id: id,
+          token: auth().access_token,
+        })
+        .then((res) => {
+          toast.warn("Remove from Cart", {
+            autoClose: 1000,
+          });
+          dispatch(fetchCart());
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } else {
+      return false;
+    }
+  };
+  useEffect(() => {
+    if (cart && cart.cartProducts.length > 0) {
+      const cartsItems = cart.cartProducts.map((item) => {
+        return {
+          ...item,
+          totalPrice: item.product.offer_price
+            ? item.product.offer_price * parseInt(item.qty)
+            : item.product.price * parseInt(item.qty),
+        };
+      });
+      setGetCarts(cartsItems);
+    } else {
+      setGetCarts([]);
+    }
+  }, [cart]);
+  const calCPriceDependQunatity = (id, qyt) => {
+    setGetCarts(
+      getCarts &&
+        getCarts.length > 0 &&
+        getCarts.map((cart) => {
+          if (cart.id === id) {
+            return {
+              ...cart,
+              totalPrice: cart.product.offer_price
+                ? cart.product.offer_price * qyt
+                : cart.product.price * qyt,
+            };
+          }
+          return cart;
+        })
+    );
+  };
+  const serverReqIncreseQty = (id) => {
+    if (auth()) {
+      apiRequest.incrementQyt(id, auth().access_token);
+      dispatch(fetchCart());
+    }
+  };
+  const serverReqDecreseQyt = (id) => {
+    if (auth()) {
+      apiRequest.decrementQyt(id, auth().access_token);
+      dispatch(fetchCart());
+    }
+  };
+  const clearCart = async () => {
+    if (auth()) {
+      setGetCarts([]);
+      await apiRequest.clearCart({
+        token: auth().access_token,
+      });
+      dispatch(fetchCart());
+    } else {
+      return false;
+    }
+  };
+
   return (
-    <Layout childrenClasses={cart ? "pt-0 pb-0" : ""}>
-      {cart === false ? (
-        <div className="cart-page-wrapper w-full">
+    <>
+      {getCarts && getCarts.length === 0 ? (
+        <div className="cart-page-wrapper w-full pt-[60px] pb-[114px]">
           <div className="container-x mx-auto">
             <BreadcrumbCom
               paths={[
-                { name: "home", path: "/" },
-                { name: "cart", path: "/cart" },
+                { name: langCntnt && langCntnt.home, path: "/" },
+                { name: langCntnt && langCntnt.cart, path: "/cart" },
               ]}
             />
             <EmptyCardError />
           </div>
         </div>
       ) : (
-        <div className="cart-page-wrapper w-full bg-white pb-[60px]">
+        <div className="cart-page-wrapper w-full bg-white  pb-[114px]">
           <div className="w-full">
             <PageTitle
-              title="Your Cart"
+              title={langCntnt && langCntnt.Your_cart}
               breadcrumb={[
-                { name: "home", path: "/" },
-                { name: "cart", path: "/cart" },
+                { name: langCntnt && langCntnt.home, path: "/" },
+                { name: langCntnt && langCntnt.cart, path: "/cart" },
               ]}
             />
           </div>
-          <div className="w-full mt-[23px]">
+          <div className="w-full pt-[60px]">
             <div className="container-x mx-auto">
-              <ProductsTable className="mb-[30px]" />
+              <ProductsTable
+                calCPriceDependQunatity={calCPriceDependQunatity}
+                incrementQty={serverReqIncreseQty}
+                decrementQty={serverReqDecreseQyt}
+                deleteItem={deleteItem}
+                cartItems={getCarts && getCarts}
+                className="mb-[30px]"
+              />
               <div className="w-full sm:flex justify-between">
-                <div className="discount-code sm:w-[270px] w-full mb-5 sm:mb-0 h-[50px] flex">
-                  <div className="flex-1 h-full">
-                    <InputCom type="text" placeholder="Discount Code" />
-                  </div>
-                  <button type="button" className="w-[90px] h-[50px] black-btn">
-                    <span className="text-sm font-semibold">Apply</span>
+                <div className="flex space-x-4 items-center">
+                  <button onClick={clearCart} type="button">
+                    <div className="w-full text-sm font-semibold text-qred mb-5 sm:mb-0">
+                      {langCntnt && langCntnt.Clear_Cart}
+                    </div>
                   </button>
-                </div>
-                <div className="flex space-x-2.5 items-center">
-                  <Link href="#">
-                    <div className="w-[220px] h-[50px] bg-[#F6F6F6] flex justify-center items-center">
+                  <Link href="/cart">
+                    <div className="w-[140px] md:flex hidden rounded-full h-[50px] bg-[#F6F6F6] flex justify-center items-center cursor-pointer">
                       <span className="text-sm font-semibold">
-                        Continue Shopping
+                        {langCntnt && langCntnt.Update_Cart}
                       </span>
                     </div>
                   </Link>
-                  <Link href="#">
-                    <div className="w-[140px] h-[50px] bg-[#F6F6F6] flex justify-center items-center">
-                      <span className="text-sm font-semibold">Update Cart</span>
-                    </div>
-                  </Link>
-                </div>
-              </div>
-              <div className="w-full mt-[30px] flex sm:justify-end">
-                <div className="sm:w-[370px] w-full border border-[#EDEDED] px-[30px] py-[26px]">
-                  <div className="sub-total mb-6">
-                    <div className=" flex justify-between mb-6">
-                      <p className="text-[15px] font-medium text-qblack">
-                        Subtotal
-                      </p>
-                      <p className="text-[15px] font-medium text-qred">₦365</p>
-                    </div>
-                    <div className="w-full h-[1px] bg-[#EDEDED]"></div>
-                  </div>
-                  <div className="shipping mb-6">
-                    <span className="text-[15px] font-medium text-qblack mb-[18px] block">
-                      Shipping
-                    </span>
-                    <ul className="flex flex-col space-y-1">
-                      <li>
-                        <div className="flex justify-between items-center">
-                          <div className="flex space-x-2.5 items-center">
-                            <div className="input-radio">
-                              <input
-                                type="radio"
-                                name="price"
-                                className="accent-pink-500"
-                              />
-                            </div>
-                            <span className="text-[13px] text-normal text-qgraytwo">
-                              Free Shipping
-                            </span>
-                          </div>
-                          <span className="text-[13px] text-normal text-qgraytwo">
-                            +₦00.00
-                          </span>
-                        </div>
-                      </li>
-                      <li>
-                        <div className="flex justify-between items-center">
-                          <div className="flex space-x-2.5 items-center">
-                            <div className="input-radio">
-                              <input
-                                type="radio"
-                                name="price"
-                                className="accent-pink-500"
-                              />
-                            </div>
-                            <span className="text-[13px] text-normal text-qgraytwo">
-                              Flat Rate
-                            </span>
-                          </div>
-                          <span className="text-[13px] text-normal text-qgraytwo">
-                            +₦00.00
-                          </span>
-                        </div>
-                      </li>
-                      <li>
-                        <div className="flex justify-between items-center">
-                          <div className="flex space-x-2.5 items-center">
-                            <div className="input-radio">
-                              <input
-                                type="radio"
-                                name="price"
-                                className="accent-pink-500"
-                              />
-                            </div>
-                            <span className="text-[13px] text-normal text-qgraytwo">
-                              Local Delivery
-                            </span>
-                          </div>
-                          <span className="text-[13px] text-normal text-qgraytwo">
-                            +₦00.00
-                          </span>
-                        </div>
-                      </li>
-                    </ul>
-                  </div>
-                  <div className="shipping-calculation w-full mb-3">
-                    <div className="title mb-[17px]">
-                      <h1 className="text-[15px] font-medium">
-                        Calculate Shipping
-                      </h1>
-                    </div>
-                    <div className="w-full h-[50px] border border-[#EDEDED] px-5 flex justify-between items-center mb-2">
-                      <span className="text-[13px] text-qgraytwo">
-                        Select Country
-                      </span>
-                      <span>
-                        <svg
-                          width="11"
-                          height="7"
-                          viewBox="0 0 11 7"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            d="M5.4 6.8L0 1.4L1.4 0L5.4 4L9.4 0L10.8 1.4L5.4 6.8Z"
-                            fill="#222222"
-                          />
-                        </svg>
-                      </span>
-                    </div>
-                    <div className="w-full h-[50px]">
-                      <InputCom
-                        inputClasses="w-full h-full"
-                        type="text"
-                        placeholder="Postcode / ZIP"
-                      />
-                    </div>
-                  </div>
-                  <button type="button" className="w-full mb-10">
-                    <div className="w-full h-[50px] bg-[#F6F6F6] flex justify-center items-center">
-                      <span className="text-sm font-semibold">Update Cart</span>
-                    </div>
-                  </button>
-                  <div className="total mb-6">
-                    <div className=" flex justify-between">
-                      <p className="text-[18px] font-medium text-qblack">
-                        Total
-                      </p>
-                      <p className="text-[18px] font-medium text-qred">₦365</p>
-                    </div>
-                  </div>
                   <Link href="/checkout">
-                    <div className="w-full h-[50px] black-btn flex justify-center items-center">
-                      <span className="text-sm font-semibold">
-                        Proceed to Checkout
-                      </span>
+                    <div className="md:w-[300px]  w-1/2  h-[50px]  flex justify-center items-center cursor-pointer">
+                      <div className=" transition-common bg-qpurple hover:bg-qpurplelow/10 border border-transparent hover:border-qpurple hover:text-qpurple text-white flex justify-center items-center w-full h-full rounded-full">
+                        <span className="text-sm font-semibold">
+                          {langCntnt && langCntnt.Proceed_to_Checkout}
+                        </span>
+                      </div>
                     </div>
                   </Link>
                 </div>
@@ -193,6 +160,7 @@ export default function CardPage({ cart = true }) {
           </div>
         </div>
       )}
-    </Layout>
+    </>
   );
 }
+export default isAuth(CardPage);

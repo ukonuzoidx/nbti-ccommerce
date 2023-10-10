@@ -1,27 +1,54 @@
 import Image from "next/image";
 import Link from "next/link";
-import { useRef } from "react";
-import blog from "../../data/blogs.json";
+import { useEffect, useRef, useState } from "react";
 import BlogCard from "../Helpers/Cards/BlogCard";
 import DataIteration from "../Helpers/DataIteration";
+import FontAwesomeCom from "../Helpers/icons/FontAwesomeCom";
+import Star from "../Helpers/icons/Star";
 import PageTitle from "../Helpers/PageTitle";
 import SimpleSlider from "../Helpers/SliderCom";
-import Star from "../Helpers/icons/Star";
 import Layout from "../Partials/Layout";
-export default function About() {
+import languageModel from "../../../utils/languageModel";
+export default function About({ aboutData }) {
+  const hww = [
+    {
+      id: Math.random(),
+      title: aboutData.aboutUs.title_one,
+      description: aboutData.aboutUs.description_one,
+      icon: aboutData.aboutUs.icon_one,
+    },
+    {
+      id: Math.random(),
+      title: aboutData.aboutUs.title_two,
+      description: aboutData.aboutUs.description_two,
+      icon: aboutData.aboutUs.icon_two,
+    },
+    {
+      id: Math.random(),
+      title: aboutData.aboutUs.title_three,
+      description: aboutData.aboutUs.description_three,
+      icon: aboutData.aboutUs.icon_three,
+    },
+  ];
+  const [videoPopup, setPopup] = useState(false);
   const settings = {
-    slidesToShow: 3,
-    slidesToScroll: 3,
-    autoplay: true,
-    centerMode: true,
+    slidesToShow:
+      aboutData.testimonials.length < 3 ? aboutData.testimonials.length : 3,
+    slidesToScroll: 1,
+    autoplay: false,
+    centerMode: false,
     infinite: true,
-    centerPadding: "60px",
-    dots: false,
+    arrows: false,
+    // centerPadding: "60px",
+    dots: true,
     responsive: [
       {
         breakpoint: 1026,
         settings: {
-          slidesToShow: 2,
+          slidesToShow:
+            aboutData.testimonials.length < 2
+              ? aboutData.testimonials.length
+              : 2,
           slidesToScroll: 2,
           centerMode: false,
         },
@@ -34,10 +61,6 @@ export default function About() {
           centerMode: false,
         },
       },
-
-      // You can unslick at a given breakpoint now by adding:
-      // settings: "unslick"
-      // instead of a settings object
     ],
   };
   const slider = useRef(null);
@@ -47,676 +70,273 @@ export default function About() {
   const next = () => {
     slider.current.slickNext();
   };
+  const rs = aboutData.blogs.slice(0, 3).map((item) => {
+    return {
+      id: item.id,
+      by: item.blog.admin_id,
+      comments_length: item.blog.active_comments.length,
+      title: item.blog.title,
+      article: item.blog.description,
+      picture: process.env.NEXT_PUBLIC_BASE_URL + item.blog.image,
+      slug: item.blog.slug,
+    };
+  });
+  const [langCntnt, setLangCntnt] = useState(null);
+  useEffect(() => {
+    setLangCntnt(languageModel());
+  }, []);
   return (
     <Layout childrenClasses="pt-0 pb-0">
       <div className="about-page-wrapper w-full">
         <div className="title-area w-full">
           <PageTitle
-            title="About Us"
+            title={langCntnt && langCntnt.About_us}
             breadcrumb={[
-              { name: "home", path: "/" },
-              { name: "About us", path: "/about" },
+              { name: `${langCntnt && langCntnt.home}`, path: "/" },
+              {
+                name: `${langCntnt && langCntnt.About_us}`,
+                path: "/about",
+              },
             ]}
           />
         </div>
 
-        <div className="aboutus-wrapper w-full">
+        <div className="aboutus-wrapper w-full py-10 bg-white">
           <div className="container-x mx-auto">
             <div className="w-full min-h-[665px] lg:flex lg:space-x-12 items-center pb-10 lg:pb-0">
-              <div className="md:w-[570px] w-full md:h-[560px] h-auto rounded overflow-hidden my-5 lg:my-0 relative">
-                <Image
-                  layout="fill"
-                  src={`/images/about-banner.png`}
-                  alt="about"
-                  className="w-full h-full"
-                />
+              <div className="lg:w-1/2 w-full h-[560px] rounded overflow-hidden my-5 lg:my-0 relative">
+                  <Image
+                    width={375}
+                    height={470}
+                    src={
+                      process.env.NEXT_PUBLIC_BASE_URL +
+                      aboutData.aboutUs.image_two
+                    }
+                    alt="about"
+                    className="w-full h-full"
+                  />
+                {/* <div className="absolute left-0 top-0 ">
+                </div>
+                <div className="absolute right-0 bottom-0">
+                  <Image
+                    width={333}
+                    height={403}
+                    src={
+                      process.env.NEXT_PUBLIC_BASE_URL +
+                      aboutData.aboutUs.banner_image
+                    }
+                    alt="about"
+                    className="w-full h-full"
+                  />
+                </div> */}
               </div>
-              <div className="content flex-1">
-                <h1 className="text-[18px] font-medium text-qblack mb-2.5">
-                  What is e-commerce business?
-                </h1>
-                <p className="text-[15px] text-qgraytwo leading-7 mb-2.5">
-                  Lorem Ipsum is simply dummy text of the printing and
-                  typesetting industry. Lorem Ipsum has been the industrys
-                  standard dummy text ever since the 1500s, when an printer took
-                  a galley of type and scrambled it to make a type specimen
-                  book. It has survived not only five centuries but also the on
-                  leap into electronic typesetting.
-                </p>
-                <ul className="text-[15px] text-qgraytwo leading-7 list-disc ml-5 mb-5">
-                  <li>slim body with metal cover</li>
-                  <li>
-                    latest Intel Core i5-1135G7 processor (4 cores / 8 threads)
-                  </li>
-                  <li>8GB DDR4 RAM and fast 512GB PCIe SSD</li>
-                  <li>
-                    NVIDIA GeForce MX350 2GB GDDR5 graphics card backlit
-                    keyboard
-                  </li>
-                </ul>
+              <div className="content lg:w-1/2 w-full">
+                <div className="about-content">
+                  <div
+                    dangerouslySetInnerHTML={{
+                      __html: aboutData.aboutUs.about_us,
+                    }}
+                  ></div>
+                </div>
 
-                <Link href="/contact">
-                  <div className="w-[121px] h-10">
-                    <span className="yellow-btn">Contact Us</span>
-                  </div>
+                <Link href="/contact" passHref>
+                  <a rel="noopener noreferrer">
+                    <div className="w-[160px] h-[54px] transition-common bg-qpurple hover:bg-qpurplelow/10 border border-transparent hover:border-qpurple hover:text-qpurple text-white mt-10 cursor-pointer rounded-full flex justify-center items-center">
+                      <span>{langCntnt && langCntnt.Contact_Us}</span>
+                    </div>
+                  </a>
                 </Link>
               </div>
             </div>
           </div>
         </div>
+        <div className="how-we-work-section w-full py-[60px] qpurplelow/10">
+          <div className="container-x mx-auto">
+            <div className="flex justify-center w-full ">
+              <div className="lg:flex-row flex flex-col space-y-[30px] lg:space-y-0 lg:justify-evenly w-full items-center">
+                {hww.map((item, i) => (
+                  <>
+                    <div className="w-[286px]">
+                      <div className="flex justify-center">
+                        <div className="flex flex-col items-center">
+                          <div className="w-[104px] h-[104px] rounded-full bg-qpurple flex justify-center items-center mb-7">
+                            <span>
+                              <FontAwesomeCom
+                                className="w-10 h-10 text-white"
+                                icon={item.icon}
+                              />
+                            </span>
+                          </div>
+                          <h3 className="text-center text-[26px] font-bold text-qblack mb-3">
+                            {item.title}
+                          </h3>
+                          <p className="text-[15px] text-[#797979] text-center">
+                            {item.description}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="separator w-[1px] lg:block hidden h-[197px] bg-qpurplelow/10"></div>
+                  </>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          className="w-full h-[527px]"
+          style={{
+            backgroundImage: `url(${
+              process.env.NEXT_PUBLIC_BASE_URL +
+              aboutData.aboutUs.video_background
+            })`,
+            backgroundSize: `cover`,
+            backgroundRepeat: `no-repeat`,
+          }}
+        >
+          <div className="w-full h-full bg-black bg-opacity-60 flex justify-center items-center">
+            <div
+              onClick={() => setPopup(!videoPopup)}
+              className="flex justify-center items-center w-[140px] h-[140px] rounded-full bg-white cursor-pointer button is-play"
+            >
+              <span className="relative z-10 text-qpurple">
+                <svg
+                  width="34"
+                  height="38"
+                  viewBox="0 0 34 38"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M5.19263 0.628906C6.0417 0.925379 6.95562 1.10689 7.72971 1.53849C15.5882 5.91299 23.4345 10.3097 31.2625 14.7386C34.8452 16.7655 34.8594 21.3861 31.2828 23.413C23.4567 27.846 15.6125 32.2467 7.75605 36.6252C4.10039 38.6622 0.0779523 36.3267 0.061741 32.1478C0.0293183 23.4452 0.0394504 14.7426 0.0576882 6.04005C0.0657938 2.98657 2.26243 0.751933 5.19263 0.628906Z"
+                    fill="currentColor"
+                  />
+                </svg>
+              </span>
+              <div className="button-outer-circle has-scale-animation"></div>
+              <div className="button-outer-circle has-scale-animation has-delay-short"></div>
+            </div>
+          </div>
+        </div>
+        {videoPopup && (
+          <div className="fixed w-full left-0 top-0 h-screen flex justify-center px-2 lg:px-0 items-center z-50">
+            <div
+              onClick={() => setPopup(!videoPopup)}
+              className="fixed w-full h-full left-0 top-0 bg-black bg-opacity-50"
+            ></div>
 
-        <div className="customer-feedback w-full bg-white py-[60px]">
+            <div
+              data-aos="fade-up"
+              className="lg:w-[900px] lg:h-[500px] w-full h-[300px]  bg-white rounded relative z-50 overflow-hidden"
+            >
+              <iframe
+                className="w-full h-full"
+                src={`https://www.youtube.com/embed/${aboutData.aboutUs.video_id}`}
+                title="YouTube video player"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              ></iframe>
+            </div>
+          </div>
+        )}
+        <div className="customer-feedback w-full bg-qpurplelow/10 py-[60px]">
           <div className="title flex justify-center mb-5">
-            <h1 className="text-[30px] font-semibold text-qblack">
-              Customers Feedback
+            <h1 className="text-[36px] font-bold text-qblack">
+              {langCntnt && langCntnt.Customers_Feedback}
             </h1>
           </div>
-          <div className="feedback-slider-wrapper w-vw relative overflow-hidden">
-            <SimpleSlider selector={slider} settings={settings}>
-              <div className="item h-[385px] bg-primarygray sm:px-10 sm:py-9 p-2">
-                <div className="flex flex-col justify-between h-full">
-                  <div className="rating flex space-x-1 items-center">
-                    <div className="flex items-center">
-                      <Star w="20" h="20" />
-                      <Star w="20" h="20" />
-                      <Star w="20" h="20" />
-                      <Star w="20" h="20" />
-                      <Star w="20" h="20" />
+          <div className="container-x mx-auto">
+            <div className="feedback-slider-wrapper w-vw relative">
+              <SimpleSlider selector={slider} settings={settings}>
+                {aboutData.testimonials.length > 0 &&
+                  aboutData.testimonials.map((item, i) => (
+                    <div key={i} className="item h-[275px]">
+                      <div className="w-full h-full bg-qborder sm:px-10 sm:pt-5 p-5 rounded-md relative  bg-white">
+                        <div className="w-1 h-[143px] styling-border rounded-full absolute left-0 top-[57px]"></div>
+                        <div className="text-[18px]  text-qgray leading-[30px] line-clamp-3 mb-4 relative z-20">
+                          {item.comment}
+                        </div>
+                        <div className="absolute left-10 top-5 z-10 text-[#E5E5E5]">
+                          <svg
+                            width="38"
+                            height="30"
+                            viewBox="0 0 38 30"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="fill-current"
+                          >
+                            <path d="M7.82656 11.9446C8.29019 9.03034 11.933 5.91742 14.7809 5.85119C14.9796 5.85119 15.1783 5.78496 15.3108 5.65249C15.4433 5.58626 15.5757 5.52003 15.642 5.32133C16.6355 3.46683 16.1056 2.00972 14.4498 0.817536C12.5291 -0.573341 9.48237 0.817536 7.95903 2.07595C4.11756 5.2551 0.209852 10.7523 0.408549 15.9847C-0.253774 19.4951 -0.121309 23.2703 0.872175 26.3832C1.5345 28.3702 3.45523 29.3636 5.4422 29.4961C7.42917 29.6287 11.5356 30.2247 13.3238 29.0326C15.1121 27.8403 15.2446 25.5222 15.4433 23.5353C15.642 21.3496 16.2381 17.2431 14.3836 15.5211C12.5291 13.8653 7.23047 15.6536 7.82656 11.9446Z" />
+                            <path d="M29.683 11.9446C30.1466 9.03034 33.7893 5.91742 36.6374 5.85119C36.8361 5.85119 37.0348 5.78496 37.1673 5.65249C37.2998 5.58626 37.4322 5.52003 37.4985 5.32133C38.492 3.46683 37.9622 2.00972 36.3064 0.817536C34.3856 -0.573341 31.3389 0.817536 29.8155 2.07595C25.974 5.2551 22.0663 10.7524 22.265 15.9847C21.6027 19.4951 21.7351 23.2703 22.7285 26.3832C23.3908 28.3702 25.3116 29.3636 27.2987 29.4961C29.2856 29.6287 33.392 30.2247 35.1803 29.0326C36.9685 27.8403 37.101 25.5222 37.2997 23.5353C37.4984 21.3496 38.0945 17.2431 36.24 15.5211C34.3855 13.8653 29.0207 15.6536 29.683 11.9446Z" />
+                          </svg>
+                        </div>
+                        <div className="rating flex space-x-1 items-center mb-4">
+                          {Array.from(Array(parseInt(item.rating)), () => (
+                            <span className="text-qyellow" key={Math.random()}>
+                              <Star w="20" h="20" />
+                            </span>
+                          ))}
+                          {parseInt(item.rating) < 5 && (
+                            <>
+                              {Array.from(
+                                Array(5 - parseInt(item.rating)),
+                                () => (
+                                  <span
+                                    key={parseInt(item.rating) + Math.random()}
+                                    className="text-qgray"
+                                  >
+                                    <Star defaultValue={false} w="20" h="20" />
+                                  </span>
+                                )
+                              )}
+                            </>
+                          )}
+                          <div>
+                            <span className="text-[13px] text-qblack">
+                              ({parseInt(item.rating)})
+                            </span>
+                          </div>
+                        </div>
+                        <div className="w-full h-[1px] bg-qpurplelow/10"></div>
+                        <div className="flex items-center space-x-2.5 mt-6">
+                          <div className="w-[54px] h-[54px] rounded-full border border-qpurple relative">
+                            <div className="w-full h-full relative rounded-full overflow-hidden">
+                              <Image
+                                layout="fill"
+                                src={`${
+                                  process.env.NEXT_PUBLIC_BASE_URL + item.image
+                                }`}
+                                alt="user"
+                              />
+                            </div>
+                          </div>
+                          <div>
+                            <h3 className="text-[22px] text-qblack font-bold">
+                              {item.name}
+                            </h3>
+                            <p className="text-qgray text-base">
+                              {item.designation}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                    <span className="text-[13px] text-qblack">(5.0)</span>
-                  </div>
-                  <div className="text-[15px] text-qgraytwo leading-[30px] text-justify line-clamp-6">
-                    Lorem Ipsum is simply dummy text of the printing and
-                    typesetting industry. Lorem Ipsum has been the industrys
-                    standard dummy text ever since the 1500s, when an into the
-                    find unknown printer took a galley of type and scrambled it
-                    to make a type inot the specimen book. It has survived not
-                    only five centuries but also the on leap into find it a
-                    electronic typesetting, remaining end to make it.
-                  </div>
-                  <div className="flex items-center space-x-2.5 mt-3">
-                    <div className="w-[50px] h-[50px] rounded-full overflow-hidden relative">
-                      <Image
-                        layout="fill"
-                        src={`/assets/images/comment-user-1.png`}
-                        alt="user"
-                      />
-                    </div>
-                    <div>
-                      <p className="text-[18px] text-qblack font-medium">
-                        Ridoy Rock
-                      </p>
-                      <p className="text-qgraytwo text-[13px]">London,UK</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="item h-[385px] bg-primarygray sm:px-10 sm:py-9 p-2">
-                <div className="flex flex-col justify-between h-full">
-                  <div className="rating flex space-x-1 items-center">
-                    <div className="flex items-center">
-                      <Star w="20" h="20" />
-                      <Star w="20" h="20" />
-                      <Star w="20" h="20" />
-                      <Star w="20" h="20" />
-                      <Star w="20" h="20" />
-                    </div>
-                    <span className="text-[13px] text-qblack">(5.0)</span>
-                  </div>
-                  <div className="text-[15px] text-qgraytwo leading-[30px] text-justify line-clamp-6">
-                    Lorem Ipsum is simply dummy text of the printing and
-                    typesetting industry. Lorem Ipsum has been the industrys
-                    standard dummy text ever since the 1500s, when an into the
-                    find unknown printer took a galley of type and scrambled it
-                    to make a type inot the specimen book. It has survived not
-                    only five centuries but also the on leap into find it a
-                    electronic typesetting, remaining end to make it.
-                  </div>
-                  <div className="flex items-center space-x-2.5 mt-3">
-                    <div className="w-[50px] h-[50px] rounded-full overflow-hidden relative">
-                      <Image
-                        layout="fill"
-                        src={`/assets/images/comment-user-1.png`}
-                        alt="user"
-                      />
-                    </div>
-                    <div>
-                      <p className="text-[18px] text-qblack font-medium">
-                        Ridoy Rock
-                      </p>
-                      <p className="text-qgraytwo text-[13px]">London,UK</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="item h-[385px] bg-primarygray sm:px-10 sm:py-9 p-2">
-                <div className="flex flex-col justify-between h-full">
-                  <div className="rating flex space-x-1 items-center">
-                    <div className="flex items-center">
-                      <Star w="20" h="20" />
-                      <Star w="20" h="20" />
-                      <Star w="20" h="20" />
-                      <Star w="20" h="20" />
-                      <Star w="20" h="20" />
-                    </div>
-                    <span className="text-[13px] text-qblack">(5.0)</span>
-                  </div>
-                  <div className="text-[15px] text-qgraytwo leading-[30px] text-justify line-clamp-6">
-                    Lorem Ipsum is simply dummy text of the printing and
-                    typesetting industry. Lorem Ipsum has been the industrys
-                    standard dummy text ever since the 1500s, when an into the
-                    find unknown printer took a galley of type and scrambled it
-                    to make a type inot the specimen book. It has survived not
-                    only five centuries but also the on leap into find it a
-                    electronic typesetting, remaining end to make it.
-                  </div>
-                  <div className="flex items-center space-x-2.5 mt-3">
-                    <div className="w-[50px] h-[50px] rounded-full overflow-hidden relative">
-                      <Image
-                        layout="fill"
-                        src={`/assets/images/comment-user-1.png`}
-                        alt="user"
-                      />
-                    </div>
-                    <div>
-                      <p className="text-[18px] text-qblack font-medium">
-                        Ridoy Rock
-                      </p>
-                      <p className="text-qgraytwo text-[13px]">London,UK</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="item h-[385px] bg-primarygray sm:px-10 sm:py-9 p-2">
-                <div className="flex flex-col justify-between h-full">
-                  <div className="rating flex space-x-1 items-center">
-                    <div className="flex items-center">
-                      <Star w="20" h="20" />
-                      <Star w="20" h="20" />
-                      <Star w="20" h="20" />
-                      <Star w="20" h="20" />
-                      <Star w="20" h="20" />
-                    </div>
-                    <span className="text-[13px] text-qblack">(5.0)</span>
-                  </div>
-                  <div className="text-[15px] text-qgraytwo leading-[30px] text-justify line-clamp-6">
-                    Lorem Ipsum is simply dummy text of the printing and
-                    typesetting industry. Lorem Ipsum has been the industrys
-                    standard dummy text ever since the 1500s, when an into the
-                    find unknown printer took a galley of type and scrambled it
-                    to make a type inot the specimen book. It has survived not
-                    only five centuries but also the on leap into find it a
-                    electronic typesetting, remaining end to make it.
-                  </div>
-                  <div className="flex items-center space-x-2.5 mt-3">
-                    <div className="w-[50px] h-[50px] rounded-full overflow-hidden relative">
-                      <Image
-                        layout="fill"
-                        src={`/assets/images/comment-user-1.png`}
-                        alt="user"
-                      />
-                    </div>
-                    <div>
-                      <p className="text-[18px] text-qblack font-medium">
-                        Ridoy Rock
-                      </p>
-                      <p className="text-qgraytwo text-[13px]">London,UK</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="item h-[385px] bg-primarygray sm:px-10 sm:py-9 p-2">
-                <div className="flex flex-col justify-between h-full">
-                  <div className="rating flex space-x-1 items-center">
-                    <div className="flex items-center">
-                      <Star w="20" h="20" />
-                      <Star w="20" h="20" />
-                      <Star w="20" h="20" />
-                      <Star w="20" h="20" />
-                      <Star w="20" h="20" />
-                    </div>
-                    <span className="text-[13px] text-qblack">(5.0)</span>
-                  </div>
-                  <div className="text-[15px] text-qgraytwo leading-[30px] text-justify line-clamp-6">
-                    Lorem Ipsum is simply dummy text of the printing and
-                    typesetting industry. Lorem Ipsum has been the industrys
-                    standard dummy text ever since the 1500s, when an into the
-                    find unknown printer took a galley of type and scrambled it
-                    to make a type inot the specimen book. It has survived not
-                    only five centuries but also the on leap into find it a
-                    electronic typesetting, remaining end to make it.
-                  </div>
-                  <div className="flex items-center space-x-2.5 mt-3">
-                    <div className="w-[50px] h-[50px] rounded-full overflow-hidden relative">
-                      <Image
-                        layout="fill"
-                        src={`/assets/images/comment-user-1.png`}
-                        alt="user"
-                      />
-                    </div>
-                    <div>
-                      <p className="text-[18px] text-qblack font-medium">
-                        Ridoy Rock
-                      </p>
-                      <p className="text-qgraytwo text-[13px]">London,UK</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="item h-[385px] bg-primarygray sm:px-10 sm:py-9 p-2">
-                <div className="flex flex-col justify-between h-full">
-                  <div className="rating flex space-x-1 items-center">
-                    <div className="flex items-center">
-                      <Star w="20" h="20" />
-                      <Star w="20" h="20" />
-                      <Star w="20" h="20" />
-                      <Star w="20" h="20" />
-                      <Star w="20" h="20" />
-                    </div>
-                    <span className="text-[13px] text-qblack">(5.0)</span>
-                  </div>
-                  <div className="text-[15px] text-qgraytwo leading-[30px] text-justify line-clamp-6">
-                    Lorem Ipsum is simply dummy text of the printing and
-                    typesetting industry. Lorem Ipsum has been the industrys
-                    standard dummy text ever since the 1500s, when an into the
-                    find unknown printer took a galley of type and scrambled it
-                    to make a type inot the specimen book. It has survived not
-                    only five centuries but also the on leap into find it a
-                    electronic typesetting, remaining end to make it.
-                  </div>
-                  <div className="flex items-center space-x-2.5 mt-3">
-                    <div className="w-[50px] h-[50px] rounded-full overflow-hidden relative">
-                      <Image
-                        layout="fill"
-                        src={`/assets/images/comment-user-1.png`}
-                        alt="user"
-                      />
-                    </div>
-                    <div>
-                      <p className="text-[18px] text-qblack font-medium">
-                        Ridoy Rock
-                      </p>
-                      <p className="text-qgraytwo text-[13px]">London,UK</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="item h-[385px] bg-primarygray sm:px-10 sm:py-9 p-2">
-                <div className="flex flex-col justify-between h-full">
-                  <div className="rating flex space-x-1 items-center">
-                    <div className="flex items-center">
-                      <Star w="20" h="20" />
-                      <Star w="20" h="20" />
-                      <Star w="20" h="20" />
-                      <Star w="20" h="20" />
-                      <Star w="20" h="20" />
-                    </div>
-                    <span className="text-[13px] text-qblack">(5.0)</span>
-                  </div>
-                  <div className="text-[15px] text-qgraytwo leading-[30px] text-justify line-clamp-6">
-                    Lorem Ipsum is simply dummy text of the printing and
-                    typesetting industry. Lorem Ipsum has been the industrys
-                    standard dummy text ever since the 1500s, when an into the
-                    find unknown printer took a galley of type and scrambled it
-                    to make a type inot the specimen book. It has survived not
-                    only five centuries but also the on leap into find it a
-                    electronic typesetting, remaining end to make it.
-                  </div>
-                  <div className="flex items-center space-x-2.5 mt-3">
-                    <div className="w-[50px] h-[50px] rounded-full overflow-hidden relative">
-                      <Image
-                        layout="fill"
-                        src={`/assets/images/comment-user-1.png`}
-                        alt="user"
-                      />
-                    </div>
-                    <div>
-                      <p className="text-[18px] text-qblack font-medium">
-                        Ridoy Rock
-                      </p>
-                      <p className="text-qgraytwo text-[13px]">London,UK</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="item h-[385px] bg-primarygray sm:px-10 sm:py-9 p-2">
-                <div className="flex flex-col justify-between h-full">
-                  <div className="rating flex space-x-1 items-center">
-                    <div className="flex items-center">
-                      <Star w="20" h="20" />
-                      <Star w="20" h="20" />
-                      <Star w="20" h="20" />
-                      <Star w="20" h="20" />
-                      <Star w="20" h="20" />
-                    </div>
-                    <span className="text-[13px] text-qblack">(5.0)</span>
-                  </div>
-                  <div className="text-[15px] text-qgraytwo leading-[30px] text-justify line-clamp-6">
-                    Lorem Ipsum is simply dummy text of the printing and
-                    typesetting industry. Lorem Ipsum has been the industrys
-                    standard dummy text ever since the 1500s, when an into the
-                    find unknown printer took a galley of type and scrambled it
-                    to make a type inot the specimen book. It has survived not
-                    only five centuries but also the on leap into find it a
-                    electronic typesetting, remaining end to make it.
-                  </div>
-                  <div className="flex items-center space-x-2.5 mt-3">
-                    <div className="w-[50px] h-[50px] rounded-full overflow-hidden relative">
-                      <Image
-                        layout="fill"
-                        src={`/assets/images/comment-user-1.png`}
-                        alt="user"
-                      />
-                    </div>
-                    <div>
-                      <p className="text-[18px] text-qblack font-medium">
-                        Ridoy Rock
-                      </p>
-                      <p className="text-qgraytwo text-[13px]">London,UK</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="item h-[385px] bg-primarygray sm:px-10 sm:py-9 p-2">
-                <div className="flex flex-col justify-between h-full">
-                  <div className="rating flex space-x-1 items-center">
-                    <div className="flex items-center">
-                      <Star w="20" h="20" />
-                      <Star w="20" h="20" />
-                      <Star w="20" h="20" />
-                      <Star w="20" h="20" />
-                      <Star w="20" h="20" />
-                    </div>
-                    <span className="text-[13px] text-qblack">(5.0)</span>
-                  </div>
-                  <div className="text-[15px] text-qgraytwo leading-[30px] text-justify line-clamp-6">
-                    Lorem Ipsum is simply dummy text of the printing and
-                    typesetting industry. Lorem Ipsum has been the industrys
-                    standard dummy text ever since the 1500s, when an into the
-                    find unknown printer took a galley of type and scrambled it
-                    to make a type inot the specimen book. It has survived not
-                    only five centuries but also the on leap into find it a
-                    electronic typesetting, remaining end to make it.
-                  </div>
-                  <div className="flex items-center space-x-2.5 mt-3">
-                    <div className="w-[50px] h-[50px] rounded-full overflow-hidden relative">
-                      <Image
-                        layout="fill"
-                        src={`/assets/images/comment-user-1.png`}
-                        alt="user"
-                      />
-                    </div>
-                    <div>
-                      <p className="text-[18px] text-qblack font-medium">
-                        Ridoy Rock
-                      </p>
-                      <p className="text-qgraytwo text-[13px]">London,UK</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </SimpleSlider>
-
-            <div className="slider-btns flex justify-center mt-[40px]">
-              <div className="flex space-x-5 item-center">
-                <button
-                  onClick={prev}
-                  type="button"
-                  className="w-[48px] h-[48px] rounded-full overflow-hidden flex justify-center items-center border border-qyellow text-qyellow focus:bg-qprimary focus:text-white"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-6 w-6"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M15 19l-7-7 7-7"
-                    />
-                  </svg>
-                </button>
-                <button
-                  onClick={next}
-                  type="button"
-                  className="w-[48px] h-[48px] rounded-full overflow-hidden flex justify-center items-center border border-qyellow text-qyellow focus:bg-qprimary focus:text-white"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-6 w-6 transform rotate-180"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M15 19l-7-7 7-7"
-                    />
-                  </svg>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="container-x mx-auto my-[60px]">
-          <div
-            data-aos="fade-down"
-            className="best-services w-full bg-qprimary flex flex-col space-y-10 lg:space-y-0 lg:flex-row lg:justify-between lg:items-center lg:h-[110px] px-10 lg:py-0 py-10"
-          >
-            <div className="item">
-              <div className="flex space-x-5 items-center">
-                <div>
-                  <span>
-                    <svg
-                      width="36"
-                      height="36"
-                      viewBox="0 0 36 36"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M1 1H5.63636V24.1818H35"
-                        stroke="#222222"
-                        strokeWidth="2"
-                        strokeMiterlimit="10"
-                        strokeLinecap="square"
-                      />
-                      <path
-                        d="M8.72763 35.0002C10.4347 35.0002 11.8185 33.6163 11.8185 31.9093C11.8185 30.2022 10.4347 28.8184 8.72763 28.8184C7.02057 28.8184 5.63672 30.2022 5.63672 31.9093C5.63672 33.6163 7.02057 35.0002 8.72763 35.0002Z"
-                        stroke="#222222"
-                        strokeWidth="2"
-                        strokeMiterlimit="10"
-                        strokeLinecap="square"
-                      />
-                      <path
-                        d="M31.9073 35.0002C33.6144 35.0002 34.9982 33.6163 34.9982 31.9093C34.9982 30.2022 33.6144 28.8184 31.9073 28.8184C30.2003 28.8184 28.8164 30.2022 28.8164 31.9093C28.8164 33.6163 30.2003 35.0002 31.9073 35.0002Z"
-                        stroke="#222222"
-                        strokeWidth="2"
-                        strokeMiterlimit="10"
-                        strokeLinecap="square"
-                      />
-                      <path
-                        d="M34.9982 1H11.8164V18H34.9982V1Z"
-                        stroke="#222222"
-                        strokeWidth="2"
-                        strokeMiterlimit="10"
-                        strokeLinecap="square"
-                      />
-                      <path
-                        d="M11.8164 7.18164H34.9982"
-                        stroke="#222222"
-                        strokeWidth="2"
-                        strokeMiterlimit="10"
-                        strokeLinecap="square"
-                      />
-                    </svg>
-                  </span>
-                </div>
-                <div>
-                  <p className="text-black text-[15px] font-700 tracking-wide mb-1 uppercase">
-                    Free Shipping
-                  </p>
-                  <p className="text-sm text-qblack">When ordering over $100</p>
-                </div>
-              </div>
-            </div>
-            <div className="item">
-              <div className="flex space-x-5 items-center">
-                <div>
-                  <span>
-                    <svg
-                      width="32"
-                      height="34"
-                      viewBox="0 0 32 34"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M31 17.4502C31 25.7002 24.25 32.4502 16 32.4502C7.75 32.4502 1 25.7002 1 17.4502C1 9.2002 7.75 2.4502 16 2.4502C21.85 2.4502 26.95 5.7502 29.35 10.7002"
-                        stroke="#222222"
-                        strokeWidth="2"
-                        strokeMiterlimit="10"
-                      />
-                      <path
-                        d="M30.7 2L29.5 10.85L20.5 9.65"
-                        stroke="#222222"
-                        strokeWidth="2"
-                        strokeMiterlimit="10"
-                        strokeLinecap="square"
-                      />
-                    </svg>
-                  </span>
-                </div>
-                <div>
-                  <p className="text-black text-[15px] font-700 tracking-wide mb-1 uppercase">
-                    Free Return
-                  </p>
-                  <p className="text-sm text-qblack">
-                    Get Return within 30 days
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div className="item">
-              <div className="flex space-x-5 items-center">
-                <div>
-                  <span>
-                    <svg
-                      width="32"
-                      height="38"
-                      viewBox="0 0 32 38"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M22.6654 18.667H9.33203V27.0003H22.6654V18.667Z"
-                        stroke="#222222"
-                        strokeWidth="2"
-                        strokeMiterlimit="10"
-                        strokeLinecap="square"
-                      />
-                      <path
-                        d="M12.668 18.6663V13.6663C12.668 11.833 14.168 10.333 16.0013 10.333C17.8346 10.333 19.3346 11.833 19.3346 13.6663V18.6663"
-                        stroke="#222222"
-                        strokeWidth="2"
-                        strokeMiterlimit="10"
-                        strokeLinecap="square"
-                      />
-                      <path
-                        d="M31 22C31 30.3333 24.3333 37 16 37C7.66667 37 1 30.3333 1 22V5.33333L16 2L31 5.33333V22Z"
-                        stroke="#222222"
-                        strokeWidth="2"
-                        strokeMiterlimit="10"
-                        strokeLinecap="square"
-                      />
-                    </svg>
-                  </span>
-                </div>
-                <div>
-                  <p className="text-black text-[15px] font-700 tracking-wide mb-1 uppercase">
-                    Secure Payment
-                  </p>
-                  <p className="text-sm text-qblack">
-                    100% Secure Online Payment
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div className="item">
-              <div className="flex space-x-5 items-center">
-                <div>
-                  <span>
-                    <svg
-                      width="32"
-                      height="35"
-                      viewBox="0 0 32 35"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M7 13H5.5C2.95 13 1 11.05 1 8.5V1H7"
-                        stroke="#222222"
-                        strokeWidth="2"
-                        strokeMiterlimit="10"
-                      />
-                      <path
-                        d="M25 13H26.5C29.05 13 31 11.05 31 8.5V1H25"
-                        stroke="#222222"
-                        strokeWidth="2"
-                        strokeMiterlimit="10"
-                      />
-                      <path
-                        d="M16 28V22"
-                        stroke="#222222"
-                        strokeWidth="2"
-                        strokeMiterlimit="10"
-                      />
-                      <path
-                        d="M16 22C11.05 22 7 17.95 7 13V1H25V13C25 17.95 20.95 22 16 22Z"
-                        stroke="#222222"
-                        strokeWidth="2"
-                        strokeMiterlimit="10"
-                        strokeLinecap="square"
-                      />
-                      <path
-                        d="M25 34H7C7 30.7 9.7 28 13 28H19C22.3 28 25 30.7 25 34Z"
-                        stroke="#222222"
-                        strokeWidth="2"
-                        strokeMiterlimit="10"
-                        strokeLinecap="square"
-                      />
-                    </svg>
-                  </span>
-                </div>
-                <div>
-                  <p className="text-black text-[15px] font-700 tracking-wide mb-1 uppercase">
-                    Best Quality
-                  </p>
-                  <p className="text-sm text-qblack">
-                    Original Product Guarenteed
-                  </p>
-                </div>
-              </div>
+                  ))}
+              </SimpleSlider>
             </div>
           </div>
         </div>
 
-        <div className="blog-post-wrapper w-full mb-[30px]">
+        <div className="blog-post-wrapper w-full pt-[60px] pb-[114px] bg-white">
           <div className="container-x mx-auto">
             <div className="blog-post-title flex justify-center items-cente mb-[30px]">
               <h1 className="text-3xl font-semibold text-qblack">
-                My Latest News
+                {langCntnt && langCntnt.My_Latest_News}
               </h1>
             </div>
 
             <div className="blogs-wrapper w-full">
-              <div className="grid md:grid-cols-2 grid-cols-1 lg:gap-[30px] gap-5">
-                <DataIteration datas={blog.blogs} startLength={0} endLength={2}>
+              <div className="grid xl:grid-cols-3 sm:grid-cols-2 grid-cols-1 lg:gap-[30px] gap-5">
+                <DataIteration datas={rs} startLength={0} endLength={3}>
                   {({ datas }) => (
                     <div
                       data-aos="fade-up"

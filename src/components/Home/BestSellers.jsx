@@ -1,36 +1,49 @@
+import Image from "next/image";
 import Link from "next/link";
-export default function BestSellers({ className, category }) {
+export default function BestSellers({ className, sallers = [] }) {
   return (
-    <div className={`w-full ${className || ""}`}>
-      <div className="grid xl:grid-cols-6 lg:grid-cols-5 sm:grid-cols-3 grid-cols-1 xl:gap-[30px] gap-5">
-        {/* show only 6 cat */}
-        {category.map((cat) => (
-          <div
-            key={cat.id}
-            data-aos="fade-left"
-            data-aos-duration="500"
-            className="item w-full flex flex-col items-center"
-          >
-            <div className="w-[170px] h-[170px] rounded-full bg-white flex justify-center items-center overflow-hidden mb-2 relative">
-              {/* <Image
-                layout="fill"
-                objectFit="scale-down"
-                src={`'https://nbti.globalfood-s.com/public/images/category/${cat.image}'`}
-                alt=""
-              /> */}
-              <img
-                src={`https://nbti.globalfood-s.com/public/images/category/${cat.image}`}
-                alt={cat.title["en"]}
-                className="w-full h-[300px] object-cover"
-              />
-            </div>
-            <Link href="/saller-page">
-              <p className="text-base font-500 text-center cursor-pointer hover:text-qyellow">
-                {cat.title["en"]}
-              </p>
-            </Link>
-          </div>
-        ))}
+    <div
+      data-aos="fade-left"
+      data-aos-duration="500"
+      className={`w-full ${className || ""}`}
+    >
+      <div className="grid xl:grid-cols-6 lg:grid-cols-5 sm:grid-cols-3 grid-cols-2 xl:gap-[30px] sm:gap-5 gap-2">
+        {sallers.length > 0 &&
+          sallers
+            .slice(0, sallers.length > 6 ? 6 : sallers.length)
+            .map((saller, i) => (
+              <div className={`item`} key={i}>
+                <Link
+                  href={{
+                    pathname: "/seller-products",
+                    query: { seller: saller.slug },
+                  }}
+                >
+                  <a rel="noopener noreferrer">
+                    <div
+                      key={saller.id}
+                      className=" w-full flex flex-col items-center group "
+                    >
+                      <div className=" w-[100px] h-[100px] flex justify-center items-center overflow-hidden mb-2 relative transform scale-100 group-hover:scale-110 transition duration-300 ease-in-out">
+                        <div className="w-full h-full relative ">
+                          <Image
+                            layout="fill"
+                            objectFit="scale-down"
+                            src={`${
+                              process.env.NEXT_PUBLIC_BASE_URL + saller.logo
+                            }`}
+                            alt={saller.slug}
+                          />
+                        </div>
+                      </div>
+                      <p className="text-base text-qblack font-500 text-center cursor-pointer">
+                        {saller.shop_name}
+                      </p>
+                    </div>
+                  </a>
+                </Link>
+              </div>
+            ))}
       </div>
     </div>
   );

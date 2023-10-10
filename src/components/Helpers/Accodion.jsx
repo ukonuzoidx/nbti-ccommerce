@@ -7,8 +7,9 @@ export default function Accodion({ init, title, des }) {
   };
   return (
     <div
-      className={`accordion-item w-full bg-white overflow-hidden ${
-        collaps ? "bg-qprimary" : "bg-white"
+      style={{ boxShadow: "rgba(0, 0, 0, 0.05) 0px 15px 64px" }}
+      className={`accordion-item rounded w-full overflow-hidden ${
+        collaps ? "bg-qpurple" : "bg-white"
       }`}
     >
       <button
@@ -16,7 +17,13 @@ export default function Accodion({ init, title, des }) {
         type="button"
         className="w-full h-[60px] text-qblack flex justify-between items-center px-5"
       >
-        <span className="sm:text-base text-sm font-semibold">{title}</span>
+        <h3
+          className={`sm:text-base text-sm font-semibold text-start  ${
+            collaps ? "text-white" : "text-qblack"
+          }`}
+        >
+          {title}
+        </h3>
         <span className="text-[#9A9A9A]">
           {collaps ? (
             <svg
@@ -28,7 +35,7 @@ export default function Accodion({ init, title, des }) {
             >
               <path
                 d="M19.9798 2.27979C19.8586 2.56995 19.7575 2.90155 19.5959 3.17098C19.212 3.73057 18.6665 3.97927 17.9998 4C17.9593 4 17.9189 4 17.8785 4C12.6051 4 7.33175 4 2.05836 4C1.51284 4 1.02793 3.85492 0.603634 3.48187C-0.204548 2.71503 -0.204548 1.26425 0.623839 0.518135C1.02793 0.165803 1.47243 0 1.99775 0C7.33175 0 12.6455 0 17.9795 0C18.9898 0 19.7373 0.621762 19.9596 1.63731C19.9596 1.65803 19.9798 1.67876 20 1.69948C19.9798 1.88601 19.9798 2.07254 19.9798 2.27979Z"
-                fill="#222222"
+                fill="#ffffff"
               />
             </svg>
           ) : (
@@ -36,7 +43,7 @@ export default function Accodion({ init, title, des }) {
               width="21"
               height="20"
               viewBox="0 0 21 20"
-              className="fill-current"
+              className="fill-current text-qpurple"
               fill="none"
               xmlns="http://www.w3.org/2000/svg"
             >
@@ -46,9 +53,14 @@ export default function Accodion({ init, title, des }) {
         </span>
       </button>
       {collaps && (
-        <div className="p-5 border-t border-[#E5A832]">
+        <div className="p-5 border-t border-qpurplelow/10">
           <div data-aos="fade-up">
-            <p className="sm:text-[15px] text-xs">{des}</p>
+            <div
+              className="sm:text-[15px] text-xs"
+              dangerouslySetInnerHTML={{
+                __html: des,
+              }}
+            ></div>
           </div>
         </div>
       )}

@@ -1,5 +1,15 @@
 import React from "react";
 import ProductsCompaire from "../src/components/ProductsCompaire/index";
-export default function productsCompairePage() {
-  return <ProductsCompaire />;
+import PageHead from "../src/components/Helpers/PageHead";
+import Layout from "../src/components/Partials/Layout";
+function productsCompairePage() {
+  return (
+    <>
+      <PageHead title="Product Compare" />
+      <Layout childrenClasses="pt-0 pb-0">
+        <ProductsCompaire />
+      </Layout>
+    </>
+  );
 }
+export default productsCompairePage;

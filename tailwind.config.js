@@ -1,22 +1,31 @@
-/** @type {import('tailwindcss').Config} */
+function withOpacity(variableName) {
+  return ({ opacityValue }) => {
+    if (opacityValue !== undefined) {
+      return `rgba(var(${variableName}), ${opacityValue})`;
+    } else {
+      return `rgb(var(${variableName}))`;
+    }
+  };
+}
 module.exports = {
-  content: ["./src/**/*.{js,jsx,ts,tsx}"],
+  content: [
+    "./pages/**/*.{js,ts,jsx,tsx}",
+    "./src/components/**/*.{js,ts,jsx,tsx}",
+  ],
   theme: {
     extend: {
       colors: {
         primarygray: "#f8f8f8",
-        qblack: "#222222",
-        qyellow: "#FFBB38",
+        qblack: "#232532",
+        qpurple: "rgb(var(--primary-color))",
+        qpurplelow: withOpacity("--primary-color"),
+        qyellow: "rgb(var(--secondary-color))",
         qprimary: "#92D050",
         qred: "#EF262C",
-        qgray: "#797979",
-        qblacktext: "#1D1D1D",
+        qgray: "#6E6D79",
         qgraytwo: "#8E8E8E",
-        "qgray-border": "#EFEFEF",
         "qblue-white": "#CBECFF",
         "qh2-green": "#2D6F6D",
-        "qh4-pink": "#FDB2BB",
-        "qh3-blue": "#1868D5",
       },
       scale: {
         60: "0.6",
@@ -26,7 +35,7 @@ module.exports = {
   variants: {
     extend: {
       textColor: ["focus-within"],
-      borderStyle: ["last"],
+      borderColor: ["last"],
     },
   },
   plugins: [require("@tailwindcss/line-clamp")],

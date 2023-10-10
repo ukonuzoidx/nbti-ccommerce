@@ -1,6 +1,6 @@
 const StarRating = ({ rating, ratingHandler, hoverRating, hoverHandler }) => (
   <div className="star-rating flex">
-    {[...Array(5)].map((star, index) => {
+    {[0, 0, 0, 0, 0].map((star, index) => {
       // eslint-disable-next-line no-param-reassign
       index += 1;
       return (
@@ -9,7 +9,7 @@ const StarRating = ({ rating, ratingHandler, hoverRating, hoverHandler }) => (
           // eslint-disable-next-line react/no-array-index-key
           key={index}
           className={
-            index <= (hoverRating || rating) ? "text-qyellow" : "text-qgray"
+            index <= (hoverRating || rating) ? "text-qpurple" : "text-[#D2D8E1]"
           }
           onClick={() => ratingHandler(index)}
           onMouseEnter={() => hoverHandler(index)}

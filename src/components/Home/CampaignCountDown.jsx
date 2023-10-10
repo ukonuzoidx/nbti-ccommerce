@@ -1,168 +1,176 @@
-import Image from "next/image";
 import Link from "next/link";
 import CountDown from "../Helpers/CountDown";
+import ShopNowBtn from "../Helpers/Buttons/ShopNowBtn";
+import { useEffect, useState } from "react";
+import languageModel from "../../../utils/languageModel";
+import DataIteration from "../Helpers/DataIteration";
+import ProductCardStyleOne from "../Helpers/Cards/ProductCardStyleOne";
 
-export default function CampaignCountDown({
-  className,
-  lastDate,
-  counterbg,
-  appscreen,
-}) {
-  const { showDate, showHour, showMinute, showSecound } = CountDown(lastDate);
-
+export default function CampaignCountDown({ className, datas, products = [] }) {
+  const { showDate, showHour, showMinute, showSecound } = CountDown(
+    datas.end_time
+  );
+  const [langCntnt, setLangCntnt] = useState(null);
+  useEffect(() => {
+    setLangCntnt(languageModel());
+  }, []);
+  const cp =
+    products &&
+    products.length > 0 &&
+    products.map((item) => {
+      return {
+        id: item.id,
+        category_id: item.category_id,
+        title: item.name,
+        slug: item.slug,
+        image: process.env.NEXT_PUBLIC_BASE_URL + item.thumb_image,
+        price: item.price,
+        offer_price: item.offer_price,
+        campaingn_product: null,
+        review: parseInt(item.averageRating),
+        variants: item.active_variants ? item.active_variants : [],
+      };
+    });
   return (
     <div>
-      <div className={`w-full lg:h-[460px] ${className || ""}`}>
-        <div className="container-x mx-auto h-full">
-          <div className="lg:flex xl:space-x-[30px] lg:space-x-5 items-center h-full">
-            <div
-              data-aos="fade-right"
-              className="campaign-countdown lg:w-1/2 h-full w-full mb-5 lg:mb-0"
-              style={{
-                background: `url(/images/campaign-cover-countdown.jpg) no-repeat`,
-                backgroundSize: "cover",
-              }}
-            >
-              <Link href="/flash-sale">
-                <div className="w-full xl:p-12 p-5">
-                  <div className="countdown-wrapper w-full flex lg:justify-between justify-evenly mb-10">
-                    <div className="countdown-item">
-                      <div className="countdown-number sm:w-[100px] sm:h-[100px] w-[50px] h-[50px] rounded-full bg-white flex justify-center items-center">
-                        <span className="font-700 sm:text-[30px] text-[14px] text-[#EB5757]">
-                          {showDate}
-                        </span>
-                      </div>
-                      <p className="sm:text-[18px] text-[12px] font-500 text-center leading-8">
-                        Days
-                      </p>
-                    </div>
-                    <div className="countdown-item">
-                      <div className="countdown-number sm:w-[100px] sm:h-[100px] w-[50px] h-[50px] rounded-full bg-white flex justify-center items-center">
-                        <span className="font-700 sm:text-[30px] text-[14px] text-[#2F80ED]">
-                          {showHour}
-                        </span>
-                      </div>
-                      <p className="sm:text-[18px] text-[12px] font-500 text-center leading-8">
-                        Hours
-                      </p>
-                    </div>
-                    <div className="countdown-item">
-                      <div className="countdown-number sm:w-[100px] sm:h-[100px] w-[50px] h-[50px] rounded-full bg-white flex justify-center items-center">
-                        <span className="font-700 sm:text-[30px] text-[14px] text-[#219653]">
-                          {showMinute}
-                        </span>
-                      </div>
-                      <p className="sm:text-[18px] text-[12px] font-500 text-center leading-8">
-                        Minutes
-                      </p>
-                    </div>
-                    <div className="countdown-item">
-                      <div className="countdown-number sm:w-[100px] sm:h-[100px] w-[50px] h-[50px] rounded-full bg-white flex justify-center items-center">
-                        <span className="font-700 sm:text-[30px] text-[14px] text-[#EF5DA8]">
-                          {showSecound}
-                        </span>
-                      </div>
-                      <p className="sm:text-[18px] text-[12px] font-500 text-center leading-8">
-                        Seconds
-                      </p>
-                    </div>
-                  </div>
-                  <div className="countdown-title mb-4">
-                    <h1 className="text-[44px] text-qblack font-600">
-                      WOO! Flash Sale
-                    </h1>
-                  </div>
-                  <div className="inline-flex space-x-2 items-center border-b border-qyellow">
-                    <span className="text-sm font-600 tracking-wide leading-7">
-                      Shop Now
-                    </span>
-                    <span>
-                      <svg
-                        width="7"
-                        height="11"
-                        viewBox="0 0 7 11"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <rect
-                          x="2.08984"
-                          y="0.636719"
-                          width="6.94219"
-                          height="1.54271"
-                          transform="rotate(45 2.08984 0.636719)"
-                          fill="#1D1D1D"
-                        />
-                        <rect
-                          x="7"
-                          y="5.54492"
-                          width="6.94219"
-                          height="1.54271"
-                          transform="rotate(135 7 5.54492)"
-                          fill="#1D1D1D"
-                        />
-                      </svg>
+      <div className={`w-full ${className || ""}`}>
+        <div
+          data-aos="fade-right"
+          className="campaign-countdown w-full h-full rounded relative bg-red-500 md:py-[60px] py-[30px]"
+        >
+          <div className="container-x mx-auto h-full">
+            <div className="flex justify-center ">
+              <div className="countdown-wrapper lg:hidden flex space-x-[20px] mb-5">
+                <div className="countdown-item">
+                  <div className="countdown-number flex justify-center">
+                    <span className="font-700 sm:text-[30px] text-[20px] text-[#EB5757]">
+                      {showDate}
                     </span>
                   </div>
-                </div>
-              </Link>
-            </div>
-            <div
-              data-aos="fade-left"
-              className="download-app flex-1 lg:h-full h-[430px] xl:p-12 p-5"
-              style={{
-                background: `url(${
-                  counterbg || `/images/download-app-cover.png`
-                }) no-repeat`,
-                backgroundSize: "cover",
-              }}
-            >
-              <div className="flex flex-col h-full justify-between">
-                <div className="get-app">
-                  <p className="text-[13px] font-600 text-qblack mb-3">
-                    MOBILE APP VERSION
+                  <p className="sm:text-[18px] text-[12px] font-500 text-center leading-8">
+                    {langCntnt && langCntnt.Days}
                   </p>
-                  <h1 className="text-[30px] font-600 text-qblack leading-10 mb-8">
-                    Coming Soon
-                    <span className="text-qred border-b-2 border-qred mx-2">
-                      Mobile App
+                </div>
+                <div className="countdown-item">
+                  <div className="countdown-number flex justify-center">
+                    <span className="font-700 sm:text-[30px] text-[20px] text-[#2F80ED]">
+                      {showHour}
                     </span>
-                    <br /> It’s Make easy for you life !
-                  </h1>
-                  <div className="flex space-x-5 items-center">
-                    <div>
-                      <Link href="#" passHref>
-                        <a>
-                          <Image
-                            width="170"
-                            height="69"
-                            src={`/images/play-store.png`}
-                            alt=""
-                          />
-                        </a>
-                      </Link>
-                    </div>
-                    <div>
-                      <Link href="#" passHref>
-                        <a>
-                          <Image
-                            width="170"
-                            height="69"
-                            src={`/images/apple-store.png`}
-                            alt=""
-                          />
-                        </a>
-                      </Link>
-                    </div>
                   </div>
+                  <p className="sm:text-[18px] text-[12px] font-500 text-center leading-8">
+                    {langCntnt && langCntnt.Hours}
+                  </p>
                 </div>
-                <div className="app-screen w-full h-full relative">
-                  <Image
-                    layout="fill"
-                    objectFit="contain"
-                    src={appscreen || `/images/app-screen.png`}
-                    alt=""
-                  />
+                <div className="countdown-item">
+                  <div className="countdown-number flex justify-center">
+                    <span className="font-700 sm:text-[30px] text-[20px] text-[#219653]">
+                      {showMinute}
+                    </span>
+                  </div>
+                  <p className="sm:text-[18px] text-[12px] font-500 text-center leading-8">
+                    {langCntnt && langCntnt.Minutes}
+                  </p>
                 </div>
+                <div className="countdown-item">
+                  <div className="countdown-number flex justify-center">
+                    <span className="font-700 sm:text-[30px] text-[20px] text-[#EF5DA8]">
+                      {showSecound}
+                    </span>
+                  </div>
+                  <p className="sm:text-[18px] text-[12px] font-500 text-center leading-8">
+                    {langCntnt && langCntnt.Seconds}
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className=" section-title flex justify-between items-center mb-5">
+              <div>
+                <h1 className="sm:text-3xl text-xl font-600 text-qblack leading-none">
+                  Flash Sale
+                </h1>
+              </div>
+              <div className="countdown-wrapper hidden  lg:flex space-x-[50px]">
+                <div className="countdown-item">
+                  <div className="countdown-number flex justify-center">
+                    <span className="font-700 sm:text-[30px] text-[20px] text-[#EB5757]">
+                      {showDate}
+                    </span>
+                  </div>
+                  <p className="sm:text-[18px] text-[12px] font-500 text-center leading-8">
+                    {langCntnt && langCntnt.Days}
+                  </p>
+                </div>
+                <div className="countdown-item">
+                  <div className="countdown-number flex justify-center">
+                    <span className="font-700 sm:text-[30px] text-[20px] text-[#2F80ED]">
+                      {showHour}
+                    </span>
+                  </div>
+                  <p className="sm:text-[18px] text-[12px] font-500 text-center leading-8">
+                    {langCntnt && langCntnt.Hours}
+                  </p>
+                </div>
+                <div className="countdown-item">
+                  <div className="countdown-number flex justify-center">
+                    <span className="font-700 sm:text-[30px] text-[20px] text-[#219653]">
+                      {showMinute}
+                    </span>
+                  </div>
+                  <p className="sm:text-[18px] text-[12px] font-500 text-center leading-8">
+                    {langCntnt && langCntnt.Minutes}
+                  </p>
+                </div>
+                <div className="countdown-item">
+                  <div className="countdown-number flex justify-center">
+                    <span className="font-700 sm:text-[30px] text-[20px] text-[#EF5DA8]">
+                      {showSecound}
+                    </span>
+                  </div>
+                  <p className="sm:text-[18px] text-[12px] font-500 text-center leading-8">
+                    {langCntnt && langCntnt.Seconds}
+                  </p>
+                </div>
+              </div>
+
+              <div className="view-more-btn">
+                <Link href="/flash-sale" passHref>
+                  <a rel="noopener noreferrer">
+                    <div className="flex space-x-2 items-center cursor-pointer group">
+                      <p className="text-base flex space-x-2 items-center font-600 group-hover:text-qpurple text-qblack capitalize transition duration-300 ease-in-out">
+                        {langCntnt && langCntnt.View_More}
+                        <span className="transform translate-x-0 group-hover:translate-x-0.5  transition duration-300 ease-in-out">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            width="24"
+                            height="24"
+                            className={`fill-current`}
+                          >
+                            <path fill="none" d="M0 0h24v24H0z" />
+                            <path d="M13.172 12l-4.95-4.95 1.414-1.414L16 12l-6.364 6.364-1.414-1.414z" />
+                          </svg>
+                        </span>
+                      </p>
+                    </div>
+                  </a>
+                </Link>
+              </div>
+            </div>
+            <div className="products-section w-full">
+              <div className="grid xl:grid-cols-4 lg:grid-cols-3 sm:grid-cols-2 grid-cols-1 xl:gap-[30px] gap-5">
+                {cp.length > 0 && (
+                  <DataIteration
+                    datas={cp}
+                    startLength={0}
+                    endLength={cp.length > 4 ? 4 : cp.length}
+                  >
+                    {({ datas }) => (
+                      <div key={datas.id} className="item">
+                        <ProductCardStyleOne datas={datas} />
+                      </div>
+                    )}
+                  </DataIteration>
+                )}
               </div>
             </div>
           </div>

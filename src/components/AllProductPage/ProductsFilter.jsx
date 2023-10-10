@@ -1,438 +1,173 @@
-// import InputRange from "react-input-range";
-// import "react-input-range/lib/css/index.css";
-import RangeSlider from "react-range-slider-input";
-import "react-range-slider-input/dist/style.css";
 import Checkbox from "../Helpers/Checkbox";
+import { useEffect, useState } from "react";
+import languageModel from "../../../utils/languageModel";
+import RangeSlider from 'react-range-slider-input';
+import 'react-range-slider-input/dist/style.css';
 export default function ProductsFilter({
-  filters,
-  checkboxHandler,
+  categories,
+  categoryHandler,
+  varientHandler,
+  brandsHandler,
   volume,
   volumeHandler,
-  storage,
-  filterstorage,
   className,
   filterToggle,
   filterToggleHandler,
-  category,
+  variantsFilter,
+  priceMin,
+  priceMax,
+  brands,
 }) {
+  const [langCntnt, setLangCntnt] = useState(null);
+  useEffect(() => {
+    setLangCntnt(languageModel());
+  }, []);
   return (
     <>
       <div
-        className={`filter-widget w-full fixed lg:relative left-0 top-0 h-screen z-10 lg:h-auto overflow-y-scroll lg:overflow-y-auto bg-white px-[30px] pt-[40px] ${
+        style={{ boxShadow: "rgba(0, 0, 0, 0.05) 0px 15px 64px" }}
+        className={`filter-widget w-full fixed xl:relative left-0 rounded top-0 h-screen z-10 lg:h-auto overflow-y-scroll lg:overflow-y-auto bg-white px-[30px] pt-[40px] ${
           className || ""
-        }  ${filterToggle ? "block" : "hidden lg:block"}`}
+        }  ${filterToggle ? "block" : "hidden xl:block"}`}
       >
-        <div className="filter-subject-item pb-10 border-b border-qgray-border">
+        <div className="filter-subject-item pb-10 border-b border-qpurplelow/10">
           <div className="subject-title mb-[30px]">
-            <h1 className="text-black text-base font-500">
-              Product categories
+            <h1 className="text-qblack text-base font-500 capitalize">
+              {langCntnt && langCntnt.Product_categories}
             </h1>
           </div>
           <div className="filter-items">
             <ul>
-              {category.map((cat) => (
-                <li
-                  key={cat.id}
-                  className="item flex justify-between items-center mb-5"
-                >
-                  <div className="flex space-x-[14px] items-center">
-                    <div>
-                      {/* <Checkbox
-                        id="mobileLaptop"
-                        name="mobileLaptop"
-                        handleChange={(e) => checkboxHandler(e)}
-                        // checked={filters.mobileLaptop}
-                      /> */}
+              {categories &&
+                categories.length > 0 &&
+                categories.map((item, i) => (
+                  <li key={i} className="item mb-5">
+                    <div className="flex justify-between items-center">
+                      <div className="flex space-x-[14px] items-center">
+                        <div>
+                          <Checkbox
+                            className="accent-qpurple"
+                            id={item.slug}
+                            name={item.id}
+                            handleChange={(e) => categoryHandler(e)}
+                            checked={item.selected}
+                          />
+                        </div>
+                        <label
+                          htmlFor={item.slug}
+                          className="text-sm font-black font-400 capitalize"
+                        >
+                          {item.name}
+                        </label>
+                      </div>
                     </div>
-                    <div>
+                  </li>
+                ))}
+            </ul>
+          </div>
+        </div>
+        <div className="filter-subject-item pb-10 border-b border-qpurplelow/10 mt-10">
+          <div className="subject-title mb-[30px]">
+            <h1 className="text-qblack text-base font-500 capitalize">
+              {langCntnt && langCntnt.Price_Range}
+            </h1>
+          </div>
+          {volume && (
+            <>
+              <div className="price-range mb-5">
+                {/*<InputRange*/}
+                {/*  maxValue={priceMax}*/}
+                {/*  minValue={priceMin}*/}
+                {/*  value={volume}*/}
+                {/*  onChange={volumeHandler}*/}
+                {/*/>*/}
+                <RangeSlider value={volume} onInput={volumeHandler} min={priceMin} max={priceMax} />
+              </div>
+              <p className="text-xs text-qblack font-400">
+                {langCntnt && langCntnt.Price}: ${volume[0]} - ${volume[1]}
+              </p>
+            </>
+          )}
+        </div>
+        <div className="filter-subject-item pb-10 border-b border-qpurplelow/10 mt-10">
+          <div className="subject-title mb-[30px]">
+            <h1 className="text-qblack text-base font-500 capitalize">
+              {langCntnt && langCntnt.Brands}
+            </h1>
+          </div>
+          <div className="filter-items">
+            <ul>
+              {brands &&
+                brands.length > 0 &&
+                brands.map((brand, i) => (
+                  <li
+                    key={i}
+                    className="item flex justify-between items-center mb-5"
+                  >
+                    <div className="flex space-x-[14px] items-center">
+                      <div>
+                        <Checkbox
+                          className="accent-qpurple"
+                          id={brand.name}
+                          name={brand.id}
+                          handleChange={(e) => brandsHandler(e)}
+                          checked={brand.selected}
+                        />
+                      </div>
                       <label
-                        htmlFor="mobileLaptop"
-                        className="text-xs font-black font-400 capitalize"
+                        htmlFor={brand.name}
+                        className="text-sm font-black font-400 capitalize"
                       >
-                        {cat.title["en"]}
+                        {brand.name}
                       </label>
                     </div>
-                  </div>
-                  <div>
-                    <span className="cursor-pointer">
-                      <svg
-                        width="10"
-                        height="10"
-                        viewBox="0 0 10 10"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
+                  </li>
+                ))}
+            </ul>
+          </div>
+        </div>
+        {variantsFilter &&
+          variantsFilter.length &&
+          variantsFilter.map((variant, i) => (
+            <div key={i} className="filter-subject-item pb-10 mt-10">
+              <div className="subject-title mb-[30px]">
+                <h1 className="text-qblack text-base font-500 capitalize">
+                  {variant.name}
+                </h1>
+              </div>
+              <div className="filter-items">
+                <ul>
+                  {variant &&
+                    variant.active_variant_items.length > 0 &&
+                    variant.active_variant_items.map((varientItem, i) => (
+                      <li
+                        key={i}
+                        className="item flex justify-between items-center mb-5"
                       >
-                        <rect y="4" width="10" height="2" fill="#C4C4C4" />
-                        <rect
-                          x="6"
-                          width="10"
-                          height="2"
-                          transform="rotate(90 6 0)"
-                          fill="#C4C4C4"
-                        />
-                      </svg>
-                    </span>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-        <div className="filter-subject-item pb-10 border-b border-qgray-border mt-10">
-          <div className="subject-title mb-[30px]">
-            <h1 className="text-black text-base font-500">Price Range</h1>
-          </div>
-          <div className="price-range mb-5">
-            {/*<InputRange*/}
-            {/*  draggableTrack*/}
-            {/*  maxValue={1000}*/}
-            {/*  minValue={0}*/}
-            {/*  value={volume}*/}
-            {/*  onChange={volumeHandler}*/}
-            {/*/>*/}
-            <RangeSlider value={volume} onInput={volumeHandler} />
-          </div>
-          <p className="text-xs text-qblack font-400">
-            Price: ${volume[0]} - ${volume[1]}
-          </p>
-        </div>
-        <div className="filter-subject-item pb-10 border-b border-qgray-border mt-10">
-          <div className="subject-title mb-[30px]">
-            <h1 className="text-black text-base font-500">Brands</h1>
-          </div>
-          <div className="filter-items">
-            <ul>
-              <li className="item flex justify-between items-center mb-5">
-                <div className="flex space-x-[14px] items-center">
-                  <div>
-                    <Checkbox
-                      id="apple"
-                      name="apple"
-                      handleChange={(e) => checkboxHandler(e)}
-                      checked={filters.apple}
-                    />
-                  </div>
-                  <div>
-                    <label
-                      htmlFor="apple"
-                      className="text-xs font-black font-400 capitalize"
-                    >
-                      apple
-                    </label>
-                  </div>
-                </div>
-              </li>
-              <li className="item flex justify-between items-center mb-5">
-                <div className="flex space-x-[14px] items-center">
-                  <div>
-                    <Checkbox
-                      id="samsung"
-                      name="samsung"
-                      handleChange={(e) => checkboxHandler(e)}
-                      checked={filters.samsung}
-                    />
-                  </div>
-                  <div>
-                    <label
-                      htmlFor="samsung"
-                      className="text-xs font-black font-400 capitalize"
-                    >
-                      Samsung
-                    </label>
-                  </div>
-                </div>
-              </li>
-              <li className="item flex justify-between items-center mb-5">
-                <div className="flex space-x-[14px] items-center">
-                  <div>
-                    <Checkbox
-                      id="walton"
-                      name="walton"
-                      handleChange={(e) => checkboxHandler(e)}
-                      checked={filters.walton}
-                    />
-                  </div>
-                  <div>
-                    <label
-                      htmlFor="walton"
-                      className="text-xs font-black font-400 capitalize"
-                    >
-                      walton
-                    </label>
-                  </div>
-                </div>
-              </li>
-              <li className="item flex justify-between items-center mb-5">
-                <div className="flex space-x-[14px] items-center">
-                  <div>
-                    <Checkbox
-                      id="oneplus"
-                      name="oneplus"
-                      handleChange={(e) => checkboxHandler(e)}
-                      checked={filters.oneplus}
-                    />
-                  </div>
-                  <div>
-                    <label
-                      htmlFor="oneplus"
-                      className="text-xs font-black font-400 capitalize"
-                    >
-                      oneplus
-                    </label>
-                  </div>
-                </div>
-              </li>
-              <li className="item flex justify-between items-center mb-5">
-                <div className="flex space-x-[14px] items-center">
-                  <div>
-                    <Checkbox
-                      id="vivo"
-                      name="vivo"
-                      handleChange={(e) => checkboxHandler(e)}
-                      checked={filters.vivo}
-                    />
-                  </div>
-                  <div>
-                    <label
-                      htmlFor="vivo"
-                      className="text-xs font-black font-400 capitalize"
-                    >
-                      vivo
-                    </label>
-                  </div>
-                </div>
-              </li>
-              <li className="item flex justify-between items-center mb-5">
-                <div className="flex space-x-[14px] items-center">
-                  <div>
-                    <Checkbox
-                      id="oppo"
-                      name="oppo"
-                      handleChange={(e) => checkboxHandler(e)}
-                      checked={filters.oppo}
-                    />
-                  </div>
-                  <div>
-                    <label
-                      htmlFor="oppo"
-                      className="text-xs font-black font-400 capitalize"
-                    >
-                      oppo
-                    </label>
-                  </div>
-                </div>
-              </li>
-              <li className="item flex justify-between items-center mb-5">
-                <div className="flex space-x-[14px] items-center">
-                  <div>
-                    <Checkbox
-                      id="xiomi"
-                      name="xiomi"
-                      handleChange={(e) => checkboxHandler(e)}
-                      checked={filters.xiomi}
-                    />
-                  </div>
-                  <div>
-                    <label
-                      htmlFor="xiomi"
-                      className="text-xs font-black font-400 capitalize"
-                    >
-                      xiomi
-                    </label>
-                  </div>
-                </div>
-              </li>
-              <li className="item flex justify-between items-center mb-5">
-                <div className="flex space-x-[14px] items-center">
-                  <div>
-                    <Checkbox
-                      id="others"
-                      name="others"
-                      handleChange={(e) => checkboxHandler(e)}
-                      checked={filters.others}
-                    />
-                  </div>
-                  <div>
-                    <label
-                      htmlFor="others"
-                      className="text-xs font-black font-400 capitalize"
-                    >
-                      others
-                    </label>
-                  </div>
-                </div>
-              </li>
-            </ul>
-          </div>
-        </div>
-        <div className="filter-subject-item pb-10 border-b border-qgray-border mt-10">
-          <div className="subject-title mb-[30px]">
-            <h1 className="text-black text-base font-500">Storage</h1>
-          </div>
-          <div className="filter-items">
-            <div className="flex space-x-[5px] flex-wrap">
-              <span
-                onClick={() => filterstorage("64GB")}
-                className={` font-400 border border-qgray-border text-xs px-[14px] py-[6px] cursor-pointer mb-[5px] ${
-                  storage === "64GB"
-                    ? "bg-qprimary text-qblack border-none"
-                    : " text-qgray "
-                }`}
-              >
-                64GB
-              </span>
-              <span
-                onClick={() => filterstorage("128GB")}
-                className={` font-400 border border-qgray-border text-xs px-[14px] py-[6px] cursor-pointer mb-[5px] ${
-                  storage === "128GB"
-                    ? "bg-qprimary text-qblack border-none"
-                    : " text-qgray "
-                }`}
-              >
-                128GB
-              </span>
-              <span
-                onClick={() => filterstorage("256GB")}
-                className={` font-400 border border-qgray-border text-xs px-[14px] py-[6px] cursor-pointer mb-[5px] ${
-                  storage === "256GB"
-                    ? "bg-qprimary text-qblack border-none"
-                    : " text-qgray "
-                }`}
-              >
-                256GB
-              </span>
-              <span
-                onClick={() => filterstorage("512GB")}
-                className={` font-400 border border-qgray-border text-xs px-[14px] py-[6px] cursor-pointer mb-[5px] ${
-                  storage === "512GB"
-                    ? "bg-qprimary text-qblack border-none"
-                    : " text-qgray "
-                }`}
-              >
-                512GB
-              </span>
-              <span
-                onClick={() => filterstorage("1024GB")}
-                className={` font-400 border border-qgray-border text-xs px-[14px] py-[6px] cursor-pointer mb-[5px] ${
-                  storage === "1024GB"
-                    ? "bg-qprimary text-qblack border-none"
-                    : " text-qgray "
-                }`}
-              >
-                1024GB
-              </span>
+                        <div className="flex space-x-[14px] items-center">
+                          <div>
+                            <Checkbox
+                              className="accent-qpurple"
+                              id={varientItem.name}
+                              name={varientItem.name}
+                              handleChange={(e) => varientHandler(e)}
+                              checked={varientItem.selected}
+                            />
+                          </div>
+                          <label
+                            htmlFor={varientItem.name}
+                            className="text-sm font-black font-400 capitalize"
+                          >
+                            {varientItem.name}
+                          </label>
+                        </div>
+                      </li>
+                    ))}
+                </ul>
+              </div>
             </div>
-          </div>
-        </div>
-        <div className="filter-subject-item pb-10 mt-10">
-          <div className="subject-title mb-[30px]">
-            <h1 className="text-black text-base font-500">Sizes</h1>
-          </div>
-          <div className="filter-items">
-            <ul>
-              <li className="item flex justify-between items-center mb-5">
-                <div className="flex space-x-[14px] items-center">
-                  <div>
-                    <Checkbox
-                      id="sizeS"
-                      name="sizeS"
-                      handleChange={(e) => checkboxHandler(e)}
-                      checked={filters.sizeS}
-                    />
-                  </div>
-                  <div>
-                    <label
-                      htmlFor="sizeS"
-                      className="text-xs font-black font-400 capitalize"
-                    >
-                      s
-                    </label>
-                  </div>
-                </div>
-              </li>
-              <li className="item flex justify-between items-center mb-5">
-                <div className="flex space-x-[14px] items-center">
-                  <div>
-                    <Checkbox
-                      id="sizeM"
-                      name="sizeM"
-                      handleChange={(e) => checkboxHandler(e)}
-                      checked={filters.sizeM}
-                    />
-                  </div>
-                  <div>
-                    <label
-                      htmlFor="sizeM"
-                      className="text-xs font-black font-400 capitalize"
-                    >
-                      M
-                    </label>
-                  </div>
-                </div>
-              </li>
-              <li className="item flex justify-between items-center mb-5">
-                <div className="flex space-x-[14px] items-center">
-                  <div>
-                    <Checkbox
-                      id="sizeXL"
-                      name="sizeXL"
-                      handleChange={(e) => checkboxHandler(e)}
-                      checked={filters.sizeXL}
-                    />
-                  </div>
-                  <div>
-                    <label
-                      htmlFor="sizeXL"
-                      className="text-xs font-black font-400 capitalize"
-                    >
-                      XL
-                    </label>
-                  </div>
-                </div>
-              </li>
-              <li className="item flex justify-between items-center mb-5">
-                <div className="flex space-x-[14px] items-center">
-                  <div>
-                    <Checkbox
-                      id="sizeXXL"
-                      name="sizeXXL"
-                      handleChange={(e) => checkboxHandler(e)}
-                      checked={filters.sizeXXL}
-                    />
-                  </div>
-                  <div>
-                    <label
-                      htmlFor="sizeXXL"
-                      className="text-xs font-black font-400 capitalize"
-                    >
-                      XXL
-                    </label>
-                  </div>
-                </div>
-              </li>
-              <li className="item flex justify-between items-center mb-5">
-                <div className="flex space-x-[14px] items-center">
-                  <div>
-                    <Checkbox
-                      id="sizeFit"
-                      name="sizeFit"
-                      handleChange={(e) => checkboxHandler(e)}
-                      checked={filters.sizeFit}
-                    />
-                  </div>
-                  <div>
-                    <label
-                      htmlFor="sizeFit"
-                      className="text-xs font-black font-400 capitalize"
-                    >
-                      Sliem Fit
-                    </label>
-                  </div>
-                </div>
-              </li>
-            </ul>
-          </div>
-        </div>
+          ))}
+
         <button
           onClick={filterToggleHandler}
           type="button"

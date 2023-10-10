@@ -1,25 +1,6 @@
 import Image from "next/image";
 import Star from "../Helpers/icons/Star";
-import InputCom from "../Helpers/InputCom";
-import LoaderStyleOne from "../Helpers/Loaders/LoaderStyleOne";
-import StarRating from "../Helpers/StarRating";
-export default function Reviews({
-  comments,
-  rating,
-  ratingHandler,
-  name,
-  nameHandler,
-  email,
-  emailHandler,
-  phone,
-  phoneHandler,
-  message,
-  messageHandler,
-  reviewAction,
-  hoverRating,
-  hoverHandler,
-  reviewLoading,
-}) {
+export default function Reviews({ comments }) {
   return (
     <div className="review-wrapper w-full">
       <div className="w-full reviews mb-[60px]">
@@ -37,7 +18,11 @@ export default function Reviews({
                     <div className="w-[50px] h-[50px] rounded-full overflow-hidden relative">
                       <Image
                         layout="fill"
-                        src={`/assets/images/comment-user-1.png`}
+                        src={
+                          comment.image
+                            ? comment.image
+                            : `/assets/images/comment-user-1.png`
+                        }
                         alt=""
                         className="w-full h-full object-cover"
                       />
@@ -46,18 +31,27 @@ export default function Reviews({
                       <p className="text-[18px] font-medium text-qblack">
                         {comment.author}
                       </p>
-                      <p className="text-[13px] font-normal text-qgray">
-                        London,UK
-                      </p>
                     </div>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <div className="flex">
+                    <div className="flex space-x-1">
                       {Array.from(Array(comment.review), () => (
                         <span key={comment.review + Math.random()}>
                           <Star />
                         </span>
                       ))}
+                      {comment.review < 5 && (
+                        <>
+                          {Array.from(Array(5 - comment.review), () => (
+                            <span
+                              key={comment.review + Math.random()}
+                              className="text-qgray"
+                            >
+                              <Star defaultValue={false} />
+                            </span>
+                          ))}
+                        </>
+                      )}
                     </div>
                     <span className="text-[13px] font-normal text-qblack mt-1 inline-block">
                       ({comment.review}.0)
@@ -90,9 +84,6 @@ export default function Reviews({
                             <p className="text-[18px] font-medium text-qblack">
                               {reply.author}
                             </p>
-                            <p className="text-[13px] font-normal text-qgray">
-                              London,UK
-                            </p>
                           </div>
                         </div>
                       </div>
@@ -105,101 +96,6 @@ export default function Reviews({
                   ))}
               </div>
             ))}
-        </div>
-        {/* load comments */}
-        <div className="w-full flex justify-center">
-          <button
-            type="button"
-            className="black-btn w-[300px] h-[50px] text-sm font-semibold"
-          >
-            Load More
-          </button>
-        </div>
-      </div>
-      <div className="write-review w-full">
-        <h1 className="text-2xl font-medium text-qblack mb-5">
-          Write Your Reviews
-        </h1>
-
-        <div className="flex space-x-1 items-center mb-[30px]">
-          <StarRating
-            hoverRating={hoverRating}
-            hoverHandler={hoverHandler}
-            rating={rating}
-            ratingHandler={ratingHandler}
-          />
-          <span className="text-qblack text-[15px] font-normal mt-1">
-            ({rating}.0)
-          </span>
-        </div>
-
-        <div className="w-full review-form ">
-          <div className="sm:flex sm:space-x-[30px] items-center mb-5">
-            <div className="sm:w-1/3 w-full">
-              <InputCom
-                label="name*"
-                placeholder=""
-                type="text"
-                name="name"
-                inputClasses="h-[50px]"
-                value={name}
-                inputHandler={nameHandler}
-              />
-            </div>
-            <div className="sm:w-1/3 w-full mt-5 sm:mt-0">
-              <InputCom
-                label="Email*"
-                placeholder=""
-                type="email"
-                name="name"
-                inputClasses="h-[50px]"
-                value={email}
-                inputHandler={emailHandler}
-              />
-            </div>
-            <div className="sm:w-1/3 w-full mt-5 sm:mt-0">
-              <InputCom
-                label="Phone Number*"
-                placeholder=""
-                type="text"
-                name="name"
-                inputClasses="h-[50px]"
-                value={phone}
-                inputHandler={phoneHandler}
-              />
-            </div>
-          </div>
-          <div className="w-full mb-[30px]">
-            <h6 className="input-label text-qgray capitalize text-[13px] font-normal block mb-2 ">
-              Message*
-            </h6>
-            <textarea
-              value={message}
-              onChange={messageHandler}
-              name=""
-              id=""
-              cols="30"
-              rows="3"
-              className="w-full focus:ring-0 focus:outline-none p-6"
-            ></textarea>
-          </div>
-
-          <div className="flex justify-end">
-            <button
-              onClick={reviewAction}
-              type="button"
-              className="black-btn w-[300px] h-[50px]  flex justify-center"
-            >
-              <span className="flex space-x-1 items-center h-full">
-                <span className="text-sm font-semibold">Submit Review</span>
-                {reviewLoading && (
-                  <span className="w-5 " style={{ transform: "scale(0.3)" }}>
-                    <LoaderStyleOne />
-                  </span>
-                )}
-              </span>
-            </button>
-          </div>
         </div>
       </div>
     </div>

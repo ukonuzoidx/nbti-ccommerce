@@ -1,7 +1,13 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-export default function Selectbox({ datas = [], className, action, children }) {
-  const [item, setItem] = useState(datas[0]);
+export default function Selectbox({
+  datas = [],
+  defaultValue = "",
+  className,
+  action,
+  children,
+}) {
+  const [item, setItem] = useState({ name: defaultValue });
   const [toggle, setToggle] = useState(false);
   const handler = (e, value) => {
     if (action) {
@@ -10,38 +16,50 @@ export default function Selectbox({ datas = [], className, action, children }) {
     setItem(value);
     setToggle(!toggle);
   };
+  useEffect(() => {
+    if (defaultValue) {
+      setItem({ name: defaultValue });
+    } else {
+      setItem({ name: "Select" });
+    }
+  }, [datas, defaultValue]);
+
   return (
     <>
-      {datas.length > 0 && (
-        <div className={`my-select-box ${className || ""}`}>
-          <button
-            onClick={() => setToggle(!toggle)}
-            type="button"
-            className="my-select-box-btn "
-          >
-            {children ? children({ item }) : <span>{item}</span>}
-          </button>
-          {toggle && (
-            <div
-              className="click-away"
-              onClick={() => setToggle(!toggle)}
-            ></div>
+      <div className={`my-select-box ${className || ""}`}>
+        <button
+          onClick={() => setToggle(!toggle)}
+          type="button"
+          className="my-select-box-btn "
+        >
+          {children ? (
+            children({ item: item && item.name })
+          ) : (
+            <span>{item && item.name}</span>
           )}
-          <div className={`my-select-box-section ${toggle ? "open" : ""}`}>
-            <ul className="list">
-              {datas.map((value) => (
+        </button>
+        {toggle && (
+          <div className="click-away" onClick={() => setToggle(!toggle)}></div>
+        )}
+        <div className={`my-select-box-section max-h-[300px] overflow-y-scroll ${toggle ? "open" : ""}`}>
+          <ul className="list">
+            <li className="cursor-not-allowed selected pointer-events-none">
+              Select One
+            </li>
+            {datas &&
+              datas.length > 0 &&
+              datas.map((value) => (
                 <li
-                  className={item === value ? "selected" : ""}
-                  key={Math.random() + value}
+                  className={item && item.name === value.name ? "selected" : ""}
+                  key={Math.random()}
                   onClick={(e) => handler(e, value)}
                 >
-                  {value}
+                  {value.name}
                 </li>
               ))}
-            </ul>
-          </div>
+          </ul>
         </div>
-      )}
+      </div>
     </>
   );
 }
