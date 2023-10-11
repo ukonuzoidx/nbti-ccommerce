@@ -1,8 +1,8 @@
-import Checkbox from "../Helpers/Checkbox";
 import { useEffect, useState } from "react";
+import RangeSlider from "react-range-slider-input";
+import "react-range-slider-input/dist/style.css";
 import languageModel from "../../../utils/languageModel";
-import RangeSlider from 'react-range-slider-input';
-import 'react-range-slider-input/dist/style.css';
+import Checkbox from "../Helpers/Checkbox";
 export default function ProductsFilter({
   categories,
   categoryHandler,
@@ -81,7 +81,12 @@ export default function ProductsFilter({
                 {/*  value={volume}*/}
                 {/*  onChange={volumeHandler}*/}
                 {/*/>*/}
-                <RangeSlider value={volume} onInput={volumeHandler} min={priceMin} max={priceMax} />
+                <RangeSlider
+                  value={volume}
+                  onInput={volumeHandler}
+                  min={priceMin}
+                  max={priceMax}
+                />
               </div>
               <p className="text-xs text-qblack font-400">
                 {langCntnt && langCntnt.Price}: ${volume[0]} - ${volume[1]}
@@ -89,43 +94,7 @@ export default function ProductsFilter({
             </>
           )}
         </div>
-        <div className="filter-subject-item pb-10 border-b border-qpurplelow/10 mt-10">
-          <div className="subject-title mb-[30px]">
-            <h1 className="text-qblack text-base font-500 capitalize">
-              {langCntnt && langCntnt.Brands}
-            </h1>
-          </div>
-          <div className="filter-items">
-            <ul>
-              {brands &&
-                brands.length > 0 &&
-                brands.map((brand, i) => (
-                  <li
-                    key={i}
-                    className="item flex justify-between items-center mb-5"
-                  >
-                    <div className="flex space-x-[14px] items-center">
-                      <div>
-                        <Checkbox
-                          className="accent-qpurple"
-                          id={brand.name}
-                          name={brand.id}
-                          handleChange={(e) => brandsHandler(e)}
-                          checked={brand.selected}
-                        />
-                      </div>
-                      <label
-                        htmlFor={brand.name}
-                        className="text-sm font-black font-400 capitalize"
-                      >
-                        {brand.name}
-                      </label>
-                    </div>
-                  </li>
-                ))}
-            </ul>
-          </div>
-        </div>
+
         {variantsFilter &&
           variantsFilter.length &&
           variantsFilter.map((variant, i) => (

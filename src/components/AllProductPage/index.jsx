@@ -529,7 +529,7 @@ export default function AllProductPage({ response, sellerInfo }) {
                   className="mb-[30px]"
                   variantsFilter={variantsFilter}
                 />
-                {response.data && response.data.shopPageSidebarBanner && parseInt(response.data.shopPageSidebarBanner.status)===1 && (
+                {/* {response.data && response.data.shopPageSidebarBanner && parseInt(response.data.shopPageSidebarBanner.status)===1 && (
                   <div
                     style={{
                       backgroundImage: `url(${
@@ -605,7 +605,7 @@ export default function AllProductPage({ response, sellerInfo }) {
                       </div>
                     </div>
                   </div>
-                )}
+                )} */}
               </div>
 
               <div className="flex-1">
@@ -728,13 +728,13 @@ export default function AllProductPage({ response, sellerInfo }) {
                         </DataIteration>
                       </div>
                     )}
-                    {response.data && response.data.shopPageCenterBanner && parseInt(response.data.shopPageCenterBanner.status) === 1 && (
+                    {/* {response.data && response.data.shopPageCenterBanner && parseInt(response.data.shopPageCenterBanner.status) === 1 && (
                         <div className="w-full relative text-qblack mb-[40px]">
                           <OneColumnAdsTwo
                               data={response.data.shopPageCenterBanner}
                           />
                         </div>
-                    )}
+                    )} */}
 
                     {products && cardViewStyle === "col" && (
                       <div className="grid xl:grid-cols-3 sm:grid-cols-2 grid-cols-1 xl:gap-[30px] gap-5">

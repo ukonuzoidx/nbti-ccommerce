@@ -1,12 +1,11 @@
-import InputCom from "../Helpers/InputCom";
-import PageTitle from "../Helpers/PageTitle";
-import Thumbnail from "./Thumbnail";
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import apiRequest from "../../../utils/apiRequest";
-import { useRouter } from "next/router";
-import isAuth from "../../../Middleware/isAuth";
 import languageModel from "../../../utils/languageModel";
+import InputCom from "../Helpers/InputCom";
+import PageTitle from "../Helpers/PageTitle";
+import Thumbnail from "./Thumbnail";
 
 function TrackingOrder() {
   const router = useRouter();
@@ -97,4 +96,5 @@ function TrackingOrder() {
     </div>
   );
 }
-export default isAuth(TrackingOrder);
+// export default isAuth(TrackingOrder);
+export default TrackingOrder;
