@@ -197,15 +197,56 @@ export default function Middlebar({ className, type, settings }) {
                   </a>
                 </Link>
               </div> */}
-              <div>
-                <Link href="/profile#dashboard" passHref>
-                  <a rel="noopener noreferrer">
-                    <span>
-                      <ThinPeople />
-                    </span>
-                  </a>
-                </Link>
+               {auth ? (
+                  <>
+                    {user && (
+                      <button onClick={profilehandler} type="button">
+                        <div className="flex space-x-4 items-center">
+                          <div className="w-[52px] h-[52px] rounded-full bg-qyellow relative overflow-hidden">
+                            {user && user.image ? (
+                              <Image
+                                layout="fill"
+                                objectFit="cover"
+                                src={
+                                  process.env.NEXT_PUBLIC_BASE_URL + user.image
+                                }
+                                alt="user"
+                              />
+                            ) : (
+                              <Image
+                                layout="fill"
+                                objectFit="cover"
+                                src={
+                                  process.env.NEXT_PUBLIC_BASE_URL +
+                                  defaultImage
+                                }
+                                alt="user"
+                              />
+                            )}
+                          </div>
+                          <div className="flex flex-col space-y-3">
+                            <h3 className="text-md text-qblack font-semibold text-start leading-none">
+                              {user.name}
+                            </h3>
+                            <p className="text-sm text-start text-qgray leading-none">
+                              {user.phone}
+                            </p>
+                          </div>
+                        </div>
+                      </button>
+                    )}
+                  </>
+                ) : (
+                  <Link href="/login" passHref>
+                    <a rel="noopener noreferrer">
+                      <span className="cursor-pointer text-[#6E6D79]">
+                        <ThinPeople className="fill-current" />
+                      </span>
+                    </a>
+                  </Link>
+                )}
               </div>
+
               {profile && (
                 <>
                   <div
@@ -236,7 +277,7 @@ export default function Middlebar({ className, type, settings }) {
                             </a>
                           </Link>
                         </li>
-                        <li className="text-base text-qgray cursor-pointer hover:text-qblack hover:font-semibold">
+                        {/* <li className="text-base text-qgray cursor-pointer hover:text-qblack hover:font-semibold">
                           <Link href="/contact" passHref>
                             <a rel="noopener noreferrer">
                               <span className="capitalize">
@@ -244,7 +285,7 @@ export default function Middlebar({ className, type, settings }) {
                               </span>
                             </a>
                           </Link>
-                        </li>
+                        </li> */}
                         <li className="text-base text-qgray cursor-pointer hover:text-qblack hover:font-semibold">
                           <Link href="/faq" passHref>
                             <a rel="noopener noreferrer">
@@ -268,7 +309,6 @@ export default function Middlebar({ className, type, settings }) {
                   </div>
                 </>
               )}
-            </div>
           </div>
         </div>
       </div>
