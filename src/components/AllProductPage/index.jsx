@@ -1,17 +1,15 @@
-import { useEffect, useState } from "react";
 import axios from "axios";
 import Image from "next/image";
-import Link from "next/link";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+import languageModel from "../../../utils/languageModel";
+import ProductCardRowStyleOne from "../Helpers/Cards/ProductCardRowStyleOne";
 import ProductCardStyleOne from "../Helpers/Cards/ProductCardStyleOne";
 import DataIteration from "../Helpers/DataIteration";
+import LoaderStyleOne from "../Helpers/Loaders/LoaderStyleOne";
 import Star from "../Helpers/icons/Star";
 import Layout from "../Partials/Layout";
 import ProductsFilter from "./ProductsFilter";
-import OneColumnAdsTwo from "../Home/ProductAds/OneColumnAdsTwo";
-import ProductCardRowStyleOne from "../Helpers/Cards/ProductCardRowStyleOne";
-import languageModel from "../../../utils/languageModel";
-import LoaderStyleOne from "../Helpers/Loaders/LoaderStyleOne";
-import { useRouter } from "next/router";
 
 export default function AllProductPage({ response, sellerInfo }) {
   const router = useRouter();
@@ -221,17 +219,19 @@ export default function AllProductPage({ response, sellerInfo }) {
           };
         })
     );
-    const min = response.data &&
-        response.data.products.data &&
-        Math.min(
-            ...response.data.products.data.map((item) => parseInt(item.price))
-        );
-    const max =  response.data &&
-        response.data.products.data &&
-        Math.max(
-            ...response.data.products.data.map((item) => parseInt(item.price))
-        );
-    const volumeArr = [min,max];
+    const min =
+      response.data &&
+      response.data.products.data &&
+      Math.min(
+        ...response.data.products.data.map((item) => parseInt(item.price))
+      );
+    const max =
+      response.data &&
+      response.data.products.data &&
+      Math.max(
+        ...response.data.products.data.map((item) => parseInt(item.price))
+      );
+    const volumeArr = [min, max];
     setVolume(volumeArr);
   }, [response.data]);
   useEffect(() => {
@@ -822,11 +822,9 @@ export default function AllProductPage({ response, sellerInfo }) {
                         relatedProducts.length === 0 ? (
                           <>
                             <p className="text-lg text-qgray  mb-[200px]">
-                              Your search -{" "}
-                              <span className="font-bold text-qpurple text-xl">
-                                "{router.query.search}"
-                              </span>{" "}
-                              - did not match any Products.
+                              Your search
+                              <span className="font-bold text-qpurple text-xl"></span>{" "}
+                              not match any Products.
                             </p>
                             <div className="flex justify-center">
                               <div className="w-[200px] h-[200px] relative">
@@ -842,11 +840,9 @@ export default function AllProductPage({ response, sellerInfo }) {
                         ) : (
                           <>
                             <p className="text-lg text-qgray mb-10">
-                              Your search -{" "}
-                              <span className="font-bold text-qpurple text-xl">
-                                "{router.query.search}"
-                              </span>{" "}
-                              - did not match any Products. But still you can
+                              Your search
+                              <span className="font-bold text-qpurple text-xl"></span>
+                              did not match any Products. But still you can
                               choose products from same category.
                             </p>
                             <div className="suggested">
