@@ -6,7 +6,7 @@ import { fetchCompareProducts } from "../../store/compareProduct";
 import { setupAction } from "../../store/websiteSetup";
 import { fetchWishlist } from "../../store/wishlistData";
 import languageModel from "../../../utils/languageModel";
-import TawkTo from "tawkto-react";
+// import TawkTo from "tawkto-react";
 import LoginContext from "../Contexts/LoginContexts";
 import Script from "next/script";
 import Consent from "../Helpers/Consent";
@@ -26,7 +26,7 @@ function DefaultLayout({ children }) {
   const [load, setLoad] = useState(false);
   const dispatch = useDispatch();
   const [gtagId, setgTagId] = useState(null);
-  const [twkData, setTwkData] = useState(null);
+  // const [twkData, setTwkData] = useState(null);
   const [fbPixexl, setFbPixel] = useState(null);
   const [popupView, setPopupView] = useState("login");
   const [langCntnt, setLangCntnt] = useState(null);
@@ -93,15 +93,15 @@ function DefaultLayout({ children }) {
     }
   }, [websiteSetup]);
 
-  useEffect(() => {
-    if (twkData) {
-      let tawk = new TawkTo(`${twkData.widgetId}`, `${twkData.propertyId}`);
+  // useEffect(() => {
+  //   if (twkData) {
+  //     let tawk = new TawkTo(`${twkData.widgetId}`, `${twkData.propertyId}`);
 
-      tawk.onStatusChange((status) => {
-        console.log(status);
-      });
-    }
-  }, [twkData]);
+  //     tawk.onStatusChange((status) => {
+  //       console.log(status);
+  //     });
+  //   }
+  // }, [twkData]);
  
   const loginActionPopup = () => {
     setPopupView("signup");
