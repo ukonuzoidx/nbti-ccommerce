@@ -290,13 +290,24 @@ export default function Navbar({ className, type }) {
                     </Link>
                   </li>
                   <li>
-                    <Link href="/products">
+                    <Link href="/sellers">
                       <span
                         className={`flex items-center text-sm font-600 cursor-pointer ${
                           type === 3 ? "text-white" : "text-qblacktext"
                         }`}
                       >
-                        <span>Shop</span>
+                        <span>Stores</span>
+                      </span>
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/brands">
+                      <span
+                        className={`flex items-center text-sm font-600 cursor-pointer ${
+                          type === 3 ? "text-white" : "text-qblacktext"
+                        }`}
+                      >
+                        <span>Brands</span>
                       </span>
                     </Link>
                   </li>

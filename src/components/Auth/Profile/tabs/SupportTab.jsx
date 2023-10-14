@@ -10,7 +10,7 @@ export default function SupportTab() {
           </button>
         </div>
         <div className="relative w-full overflow-x-auto sm:rounded-lg">
-          <table className="w-full text-sm text-left text-gray-500">
+          <table className="w-full text-sm text-left text-qgray">
             <tbody>
               {/* table heading */}
               <tr className="text-base text-qblack font-semibold bg-[#F6F6F6] whitespace-nowrap px-2 border-b default-border-bottom ">

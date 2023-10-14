@@ -12,7 +12,7 @@ export default function BrandSection({ className, sectionTitle, brands = [] }) {
             </h1>
           </div>
         </div>
-        <div className="grid lg:grid-cols-6 sm:grid-cols-4 grid-cols-2 rounded border-qpurplelow/10 border overflow-hidden">
+        <div className="grid lg:grid-cols-5 sm:grid-cols-4 grid-cols-2 rounded border-qpurplelow/10 border overflow-hidden">
           <DataIteration
             datas={brands}
             startLength={0}

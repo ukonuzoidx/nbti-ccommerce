@@ -1,11 +1,11 @@
 import Image from "next/image";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import languageModel from "../../../utils/languageModel";
+import ShopNowBtn from "../Helpers/Buttons/ShopNowBtn";
 import ProductCardStyleOne from "../Helpers/Cards/ProductCardStyleOne";
 import DataIteration from "../Helpers/DataIteration";
 import Star from "../Helpers/icons/Star";
-import Link from "next/link";
-import languageModel from "../../../utils/languageModel";
-import { useEffect, useState } from "react";
-import ShopNowBtn from "../Helpers/Buttons/ShopNowBtn";
 export default function SallerInfo({ products, sellerInfo }) {
   const { seller } = sellerInfo;
   const [langCntnt, setLangCntnt] = useState(null);
@@ -134,7 +134,7 @@ export default function SallerInfo({ products, sellerInfo }) {
           <a rel="noopener noreferrer">
             <ShopNowBtn
               className="w-[300px] h-[50px] bg-qyellow"
-              textColor="text-qblack group-hover:text-white font-semibold"
+              textColor="text-white group-hover:text-qprimary font-semibold"
               label={langCntnt && langCntnt.View_Shop}
             />
           </a>

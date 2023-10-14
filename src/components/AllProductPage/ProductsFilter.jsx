@@ -89,7 +89,7 @@ export default function ProductsFilter({
                 />
               </div>
               <p className="text-xs text-qblack font-400">
-                {langCntnt && langCntnt.Price}: ${volume[0]} - ${volume[1]}
+                {langCntnt && langCntnt.Price}: ₦{volume[0]} - ₦{volume[1]}
               </p>
             </>
           )}

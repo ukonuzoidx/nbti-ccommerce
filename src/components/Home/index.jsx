@@ -12,6 +12,7 @@ import BrandSection from "./BrandSection";
 import CampaignCountDown from "./CampaignCountDown";
 import CategorySection from "./CategorySection";
 import TwoColumnAds from "./ProductAds/TwoColumnAds";
+
 export default function Home({ homepageData }) {
   const [homepage] = useState(homepageData);
   const getsectionTitles = homepageData.section_title;
@@ -38,7 +39,7 @@ export default function Home({ homepageData }) {
   }, [isMultivendor]);
   return (
     <>
-      <Layout childrenClasses="pt-0">
+      <Layout childrenClasses="pt-10">
         {/* <Ads /> */}
         {homepage && homepage.sliders.length > 0 && (
           <Banner sliders={homepage.sliders} className="banner-wrapper" />
@@ -50,7 +51,7 @@ export default function Home({ homepageData }) {
           // sectionTitle={sectionTitles && sectionTitles.My_Market_Category}
           sectionTitle={"Shop by Category"}
         />
-  
+
         <div className="md:py-[60px] py-[30px] bg-qpurplelow/10">
           {homepage && (
             <SectionStyleThree
@@ -70,6 +71,13 @@ export default function Home({ homepageData }) {
             />
           )}
         </div>
+        {homepage && (
+          <BrandSection
+            brands={homepage.brands.length > 0 ? homepage.brands : []}
+            sectionTitle="Shop by Brand"
+            className="brand-section-wrapper md:mb-[60px] mb-[30px] mt-14"
+          />
+        )}
         {homepage && (
           <CampaignCountDown
             className="md:mb-[60px] mb-[30px]"

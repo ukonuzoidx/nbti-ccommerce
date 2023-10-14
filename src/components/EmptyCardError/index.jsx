@@ -1,8 +1,8 @@
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import languageModel from "../../../utils/languageModel";
 import { useSelector } from "react-redux";
-import Image from "next/image";
+import languageModel from "../../../utils/languageModel";
 export default function EmptyCardError() {
   const { websiteSetup } = useSelector((state) => state.websiteSetup);
   const [emptyCart, setEmptyWis] = useState(null);

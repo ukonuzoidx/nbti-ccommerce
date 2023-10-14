@@ -1,10 +1,41 @@
-import React, { useState } from "react";
-import PasswordSvg from "./PasswordSvg";
+import React, { useEffect, useState } from "react";
+import apiRequest from "../../../../../utils/apiRequest";
+import auth from "../../../../../utils/auth";
+import { toast } from "react-toastify";
+import languageModel from "../../../../../utils/languageModel";
+import { useSelector } from "react-redux";
+import Image from "next/image";
+import { useRouter } from "next/router";
 
 export default function PasswordTab() {
+  const { websiteSetup } = useSelector((state) => state.websiteSetup);
+  const [sideImg, setSideImg] = useState(null);
+  useEffect(() => {
+    if (!sideImg) {
+      if (websiteSetup) {
+        setSideImg(websiteSetup.payload?.image_content.change_password_image);
+      }
+    }
+  }, [sideImg, websiteSetup]);
+  const [langCntnt, setLangCntnt] = useState(null);
+  useEffect(() => {
+    setLangCntnt(languageModel());
+  }, []);
+  //input states
+  const [currPass, setCurrpass] = useState("");
+  const [nPass, setNpass] = useState("");
+  const [conPass, setConpass] = useState("");
+  //input states end
   const [oldPass, setOldPass] = useState("hide-password");
   const [newPass, setNewPass] = useState("hide-password");
   const [confirmPass, setConfirmPass] = useState("hide-password");
+  const router = useRouter();
+  const cancelHandler = () => {
+    setCurrpass("");
+    setNpass("");
+    setConpass("");
+    router.back();
+  };
   const showPassword = (value) => {
     const password = document.getElementById(`${value}`);
     if (value && value === "old_password") {
@@ -35,23 +66,53 @@ export default function PasswordTab() {
       }
     }
   };
+  const updatePassword = () => {
+    if (currPass && nPass && conPass) {
+      if (auth()) {
+        apiRequest
+          .updatePass(
+            {
+              current_password: currPass,
+              password: nPass,
+              password_confirmation: conPass,
+            },
+            auth().access_token
+          )
+          .then((res) => {
+            toast.success(res.data && res.data.notification);
+            setNpass("");
+            setConpass("");
+            setCurrpass("");
+          })
+          .catch((err) => {
+            err.response.data && toast.error("Someting went wrong");
+          });
+      } else {
+        return false;
+      }
+    } else {
+      return false;
+    }
+  };
   return (
     <div className="changePasswordTab w-full">
-      <div className="w-full flex xl:flex-row flex-col-reverse space-x-5 xl:items-center">
-        <div className="w-[397px] mb-10">
+      <div className="w-full flex lg:flex-row space-x-5 lg:items-center">
+        <div className="lg:w-[397px] w-full mb-10">
           <div className="input-field mb-6">
             <label
               className="input-label text-qgray text-sm block mb-2.5"
               htmlFor="old_password"
             >
-              Old Password*
+              {langCntnt && langCntnt.Old_Password}*
             </label>
-            <div className="input-wrapper border border-[#E8E8E8] w-full  h-[58px] overflow-hidden relative ">
+            <div className="input-wrapper border border-qpurplelow/10 rounded w-full  h-[58px] overflow-hidden relative ">
               <input
-                placeholder="● ● ● ● ● ●"
+                placeholder="******"
                 className="input-field placeholder:text-base text-bese px-4 text-dark-gray w-full h-full bg-[#FAFAFA] focus:ring-0 focus:outline-none"
                 type="password"
                 id="old_password"
+                value={currPass}
+                onChange={(e) => setCurrpass(e.target.value)}
               />
               <div
                 className="absolute right-6 bottom-[17px] z-10 cursor-pointer"
@@ -115,14 +176,16 @@ export default function PasswordTab() {
               className="input-label text-qgray text-sm block mb-2.5"
               htmlFor="old_password"
             >
-              Password*
+              {langCntnt && langCntnt.Password}*
             </label>
-            <div className="input-wrapper border border-[#E8E8E8] w-full  h-[58px] overflow-hidden relative ">
+            <div className="input-wrapper border border-qpurplelow/10 rounded w-full  h-[58px] overflow-hidden relative ">
               <input
-                placeholder="● ● ● ● ● ●"
+                placeholder="******"
                 className="input-field placeholder:text-base text-bese px-4 text-dark-gray w-full h-full bg-[#FAFAFA] focus:ring-0 focus:outline-none"
                 type="password"
                 id="new_password"
+                value={nPass}
+                onChange={(e) => setNpass(e.target.value)}
               />
               <div
                 className="absolute right-6 bottom-[17px] z-10 cursor-pointer"
@@ -186,14 +249,16 @@ export default function PasswordTab() {
               className="input-label text-qgray text-sm block mb-2.5"
               htmlFor="old_password"
             >
-              Re-enter Password*
+              {langCntnt && langCntnt.Re_enter_Password}*
             </label>
-            <div className="input-wrapper border border-[#E8E8E8] w-full  h-[58px] overflow-hidden relative ">
+            <div className="input-wrapper border border-qpurplelow/10 rounded w-full  h-[58px] overflow-hidden relative ">
               <input
-                placeholder="● ● ● ● ● ●"
+                placeholder="******"
                 className="input-field placeholder:text-base text-bese px-4 text-dark-gray w-full h-full bg-[#FAFAFA] focus:ring-0 focus:outline-none"
                 type="password"
                 id="confirm_password"
+                value={conPass}
+                onChange={(e) => setConpass(e.target.value)}
               />
               <div
                 className="absolute right-6 bottom-[17px] z-10 cursor-pointer"
@@ -254,23 +319,37 @@ export default function PasswordTab() {
           </div>
           <div className="w-full mt-[30px] flex justify-start">
             <div className="sm:flex sm:space-x-[30px] items-center">
-              <div className="w-[180px] h-[50px]">
-                <button type="button" className="yellow-btn">
-                  <div className="w-full text-sm font-semibold">
-                    Upldate Password
-                  </div>
+              <div className="w-[180px] h-[50px] lg:mb-0 mb-5">
+                <button
+                  onClick={updatePassword}
+                  type="button"
+                  className="transition-common bg-qpurple hover:bg-qpurplelow/10 border border-transparent hover:border-qpurple hover:text-qpurple text-white h-full w-full  rounded "
+                >
+                  <span className="w-full text-sm font-semibold ">
+                    {langCntnt && langCntnt.Update_Password}
+                  </span>
                 </button>
               </div>
-              <button type="button">
-                <div className="w-full text-sm font-semibold text-qblack mb-5 sm:mb-0">
-                  Cancel
+              <button onClick={cancelHandler} type="button">
+                <div className="w-full text-sm font-semibold text-qred mb-5 sm:mb-0">
+                  {langCntnt && langCntnt.Cancel}
                 </div>
               </button>
             </div>
           </div>
         </div>
         <div className="flex-1 sm:flex hidden justify-end">
-          <PasswordSvg />
+          {/*<PasswordSvg />*/}
+          {sideImg && (
+            <div className="w-[310px] h-[320px] relative">
+              <Image
+                layout="fill"
+                objectFit="scale-down"
+                src={process.env.NEXT_PUBLIC_BASE_URL + sideImg}
+                alt="404"
+              />
+            </div>
+          )}
         </div>
       </div>
     </div>

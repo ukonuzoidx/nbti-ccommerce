@@ -365,7 +365,7 @@ h1 span, h2 span, h3 span,h4 span,h5 span,h6 span {
 }
 
 .yellow-btn {
-    @apply w-full text-[13px] text-qblack font-semibold bg-qyellow hover:bg-black hover:text-white transition duration-300 ease-in-out flex justify-center items-center h-full;
+    @apply w-full text-[13px] text-white font-semibold bg-qyellow hover:bg-black hover:text-qprimary transition duration-300 ease-in-out flex justify-center items-center h-full;
     line-height: 0;
 }
 
