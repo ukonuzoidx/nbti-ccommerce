@@ -182,7 +182,7 @@ function Profile() {
             </div>
             <div className="profile-wrapper w-full mt-8 xl:flex xl:space-x-10 ">
               <div className="xl:w-[236px] w-full xl:min-h-[600px] xl:border-r border-qpurplelow/10 mb-10 xl:mb-0">
-                <div className="flex xl:flex-col flex-row xl:space-y-10 flex-wrap gap-x-6 gap-y-3 xl:gap-y-0 xl:gap-0">
+                <div className="flex xl:flex-col flex-row xl:space-y-10 items-center overflow-x-scroll gap-x-6 gap-y-3 xl:gap-y-0 xl:gap-0">
                   <div className="item group">
                     <Link href="/profile#dashboard">
                       <div
