@@ -5,6 +5,8 @@ import languageModel from "../../../../../utils/languageModel";
 import Arrow from "../../../Helpers/icons/Arrow";
 // import FontAwesomeCom from "../../../Helpers/icons/FontAwesomeCom";
 import Image from "next/image";
+import { useRouter } from "next/router";
+import { useDispatch } from "react-redux";
 
 export default function Navbar({ className, type }) {
   const { websiteSetup } = useSelector((state) => state.websiteSetup);
@@ -17,7 +19,10 @@ export default function Navbar({ className, type }) {
   const handler = () => {
     setToggle(!categoryToggle);
   };
-
+  const router = useRouter();
+  const dispatch = useDispatch();
+  const [switchDashboard, setSwitchDashboard] = useState(false);
+  const location = useRouter();
   useEffect(() => {
     let categorySelector = document.querySelector(".category-dropdown");
     setHeight(categorySelector.offsetHeight);
@@ -26,6 +31,17 @@ export default function Navbar({ className, type }) {
   useEffect(() => {
     setLangCntnt(languageModel());
   }, []);
+
+  const switchDashboardHandler = () => {
+    setSwitchDashboard(!switchDashboard);
+  };
+  useEffect(() => {
+    if (switchDashboard) {
+      const baseURL = process.env.NEXT_PUBLIC_BASE_URL;
+      const dashboardUrl = baseURL + "seller/dashboard";
+      router.push(dashboardUrl);
+    }
+  }, [switchDashboard]);
 
   return (
     <div
@@ -455,40 +471,44 @@ export default function Navbar({ className, type }) {
                 </ul>
               </div>
             </div>
+
             <div className="become-seller-btn">
-              <Link href="/become-seller">
-                <div className="black-btn w-[161px] h-[40px] flex justify-center items-center cursor-pointer">
-                  <div className="flex space-x-2 items-center">
-                    <span className="text-sm font-600">Become a Seller</span>
-                    <span>
-                      <svg
-                        className="fill-current"
-                        width="6"
-                        height="10"
-                        viewBox="0 0 6 10"
-                        fill="none"
-                        xmlns="http://www.w3.org/2000/svg"
-                      >
-                        <rect
-                          x="1.08984"
-                          width="6.94106"
-                          height="1.54246"
-                          transform="rotate(45 1.08984 0)"
-                          fill="white"
-                        />
-                        <rect
-                          x="6"
-                          y="4.9082"
-                          width="6.94106"
-                          height="1.54246"
-                          transform="rotate(135 6 4.9082)"
-                          fill="white"
-                        />
-                      </svg>
-                    </span>
-                  </div>
+              {/* process.env.NEXT_PUBLIC_BASE_URL + "seller/dashboard" */}
+
+              <div className="black-btn w-[161px] h-[40px] flex justify-center items-center cursor-pointer">
+                <div
+                  className="flex space-x-2 items-center"
+                  onClick={switchDashboardHandler}
+                >
+                  <span className="text-sm font-600">Vendor</span>
+                  <span>
+                    <svg
+                      className="fill-current"
+                      width="6"
+                      height="10"
+                      viewBox="0 0 6 10"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <rect
+                        x="1.08984"
+                        width="6.94106"
+                        height="1.54246"
+                        transform="rotate(45 1.08984 0)"
+                        fill="white"
+                      />
+                      <rect
+                        x="6"
+                        y="4.9082"
+                        width="6.94106"
+                        height="1.54246"
+                        transform="rotate(135 6 4.9082)"
+                        fill="white"
+                      />
+                    </svg>
+                  </span>
                 </div>
-              </Link>
+              </div>
             </div>
           </div>
         </div>

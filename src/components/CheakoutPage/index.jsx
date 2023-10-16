@@ -86,15 +86,16 @@ function CheakoutPage() {
   }, []);
   //bank status
   const [cashOnDeliveryStatus, setCashOnDeliveryStatus] = useState(null);
-  const [stripeStatus, setStripeStatus] = useState(null);
-  const [rezorPayStatue, setRezorPay] = useState(null);
-  const [flutterWaveStatus, setFlutterWaveStatus] = useState(null);
-  const [mollieStatus, setMollieStatus] = useState(null);
-  const [instaMojoStatus, setInstaMojoStatus] = useState(null);
+  // const [stripeStatus, setStripeStatus] = useState(null);
+  // const [rezorPayStatue, setRezorPay] = useState(null);
+  // const [flutterWaveStatus, setFlutterWaveStatus] = useState(null);
+  // const [mollieStatus, setMollieStatus] = useState(null);
+  // const [instaMojoStatus, setInstaMojoStatus] = useState(null);
   const [payStackStatus, setPayStackStatus] = useState(null);
-  const [paypalStatus, setPaypalStatus] = useState(null);
+  const [remitaStatus, setRemitaStatus] = useState(null);
+  // const [paypalStatus, setPaypalStatus] = useState(null);
   const [bankPaymentStatus, setBankPaymentStatus] = useState(null);
-  const [sslStatus, setSslStatus] = useState(null);
+  // const [sslStatus, setSslStatus] = useState(null);
   const submitCoupon = () => {
     if (auth()) {
       apiRequest
@@ -141,20 +142,6 @@ function CheakoutPage() {
         }`
       )
       .then((res) => {
-        setSslStatus(
-          !!(
-            res.data &&
-            res.data.sslcommerz &&
-            parseInt( res.data.sslcommerz.status) === 1
-          )
-        );
-        setPaypalStatus(
-          !!(
-            res.data &&
-            res.data.paypalPaymentInfo &&
-            parseInt(res.data.paypalPaymentInfo.status) === 1
-          )
-        );
         setPayStackStatus(
           !!(
             res.data &&
@@ -162,39 +149,11 @@ function CheakoutPage() {
             parseInt(res.data.paystackAndMollie.paystack_status) === 1
           )
         );
-        setInstaMojoStatus(
+        setRemitaStatus(
           !!(
             res.data &&
-            res.data.instamojo &&
-            parseInt(res.data.instamojo.status) === 1
-          )
-        );
-        setMollieStatus(
-          !!(
-            res.data &&
-            res.data.paystackAndMollie &&
-            parseInt(res.data.paystackAndMollie.mollie_status) === 1
-          )
-        );
-        setFlutterWaveStatus(
-          !!(
-            res.data &&
-            res.data.flutterwavePaymentInfo &&
-            parseInt(res.data.flutterwavePaymentInfo.status) === 1
-          )
-        );
-        setRezorPay(
-          !!(
-            res.data &&
-            res.data.razorpayPaymentInfo &&
-            parseInt(res.data.razorpayPaymentInfo.status) === 1
-          )
-        );
-        setStripeStatus(
-          !!(
-            res.data &&
-            res.data.stripePaymentInfo &&
-            parseInt(res.data.stripePaymentInfo.status) === 1
+            res.data.remitaPayment &&
+            parseInt(res.data.remitaPayment.status) === 1
           )
         );
         setCashOnDeliveryStatus(
@@ -219,7 +178,7 @@ function CheakoutPage() {
           const getShippingById =
             res.data &&
             res.data.shippings.length > 0 &&
-            res.data.shippings.filter((s) => parseInt(s.city_id) === 0);
+            res.data.shippings.filter((f) => parseInt(f.city_id) === 0);
           return getShippingById;
         });
         res.data && setAddresses(res.data.addresses);
@@ -315,7 +274,8 @@ function CheakoutPage() {
           email: email,
           phone: phone,
           address: address,
-          type: home ? home : office ? office : null,
+          // type: home ? home : office ? office : null,
+          type: home === true ? "home" : "office",
           country: country,
           state: state,
           city: city,
@@ -565,111 +525,10 @@ function CheakoutPage() {
                   console.log(err);
                   toast.success(err.response && err.response.message);
                 });
-            } else if (selectPayment && selectPayment === "stripe") {
-              setStrpLoading(true);
-              await apiRequest
-                .stipePay(
-                  {
-                    agree_terms_condition: 1,
-                    card_number: strpeNumber,
-                    year: expireDate && expireDate.formated.year,
-                    month: expireDate && expireDate.formated.month,
-                    cvv: cvv,
-                    card_holder_name: cardHolderName,
-                    shipping_address_id: selectedShipping,
-                    billing_address_id: selectedBilling,
-                    shipping_method_id: parseInt(selectedRule),
-                    coupon: couponCode && couponCode.code,
-                  },
-                  auth().access_token
-                )
-                .then((res) => {
-                  toast.success(res.data && res.data.message);
-                  router.push(`/order/${res.data.order_id}`);
-                  console.log(res);
-                  dispatch(fetchCart());
-                  setStrpError(null);
-                  setHolderName("");
-                  setExpireDate(null);
-                  setCvv("");
-                  setStrpeNumber("");
-                  setPaymentMethod("");
-                  setStrpLoading(false);
-                  localStorage.removeItem("coupon_set_date");
-                  localStorage.removeItem("coupon");
-                })
-                .catch((err) => {
-                  setStrpLoading(false);
-                  setStrpError(err.response && err.response.data.errors);
-                  console.error(err);
-                });
-            } else if (selectPayment && selectPayment === "paypal") {
-              setStrpLoading(true);
+            } else if (selectPayment && selectPayment === "remita") {
               const url = `${
                 process.env.NEXT_PUBLIC_BASE_URL
-              }user/checkout/paypal-react-web-view?token=${
-                auth().access_token
-              }&shipping_method_id=${parseInt(
-                selectedRule
-              )}&shipping_address_id=${selectedShipping}&coupon=${
-                couponCode && couponCode.code
-              }&billing_address_id=${selectedBilling}&success_url=${
-                typeof window !== "undefined" && window.location.origin
-                  ? window.location.origin + "/order/"
-                  : ""
-              }&faild_url=${
-                typeof window !== "undefined" && window.location.origin
-                  ? window.location.origin + "/payment-faild"
-                  : ""
-              }`;
-              router.push(url);
-              localStorage.removeItem("coupon_set_date");
-              localStorage.removeItem("coupon");
-            } else if (selectPayment && selectPayment === "razorpay") {
-              const url = `${
-                process.env.NEXT_PUBLIC_BASE_URL
-              }user/checkout/razorpay-order?token=${
-                auth().access_token
-              }&shipping_method_id=${parseInt(
-                selectedRule
-              )}&shipping_address_id=${selectedShipping}&coupon=${
-                couponCode && couponCode.code
-              }&billing_address_id=${selectedBilling}`;
-              await axios
-                .get(url)
-                .then((res) => {
-                  const order_id = res.data && res.data.order_id;
-                  const amount = res.data && res.data.amount;
-                  if (res.data) {
-                    const provideUrl = `${
-                      process.env.NEXT_PUBLIC_BASE_URL
-                    }user/checkout/razorpay-web-view?token=${
-                      auth().access_token
-                    }&shipping_address_id=${selectedShipping}&coupon=${
-                      couponCode && couponCode.code
-                    }&billing_address_id=${selectedBilling}&shipping_method_id=${parseInt(
-                      selectedRule
-                    )}&frontend_success_url=${
-                      typeof window !== "undefined" && window.location.origin
-                        ? window.location.origin + "/order/"
-                        : ""
-                    }&frontend_faild_url=${
-                      typeof window !== "undefined" && window.location.origin
-                        ? window.location.origin + "/payment-faild"
-                        : ""
-                    }&request_from=react_web&amount=${amount}&order_id=${order_id}`;
-                    router.push(provideUrl);
-                    localStorage.removeItem("coupon_set_date");
-                    localStorage.removeItem("coupon");
-                  }
-                })
-                .catch((err) => {
-                  console.log(err);
-                });
-            } else if (selectPayment && selectPayment === "flutterWave") {
-              const url = `${
-                process.env.NEXT_PUBLIC_BASE_URL
-              }user/checkout/flutterwave-web-view?token=${
+              }user/checkout/remita-web-view?token=${
                 auth().access_token
               }&shipping_method_id=${parseInt(
                 selectedRule
@@ -679,51 +538,9 @@ function CheakoutPage() {
                 typeof window !== "undefined" && window.location.origin
                   ? window.location.origin + "/order/"
                   : ""
-              }&frontend_faild_url=${
+              }&frontend_failed_url=${
                 typeof window !== "undefined" && window.location.origin
-                  ? window.location.origin + "/payment-faild"
-                  : ""
-              }`;
-              router.push(url);
-              localStorage.removeItem("coupon_set_date");
-              localStorage.removeItem("coupon");
-            } else if (selectPayment && selectPayment === "mollie") {
-              const url = `${
-                process.env.NEXT_PUBLIC_BASE_URL
-              }user/checkout/pay-with-mollie?token=${
-                auth().access_token
-              }&shipping_method_id=${parseInt(
-                selectedRule
-              )}&shipping_address_id=${selectedShipping}&coupon=${
-                couponCode && couponCode.code
-              }&billing_address_id=${selectedBilling}&request_from=react_web&frontend_success_url=${
-                typeof window !== "undefined" && window.location.origin
-                  ? window.location.origin + "/order/"
-                  : ""
-              }&frontend_faild_url=${
-                typeof window !== "undefined" && window.location.origin
-                  ? window.location.origin + "/payment-faild"
-                  : ""
-              }`;
-              router.push(url);
-              localStorage.removeItem("coupon_set_date");
-              localStorage.removeItem("coupon");
-            } else if (selectPayment && selectPayment === "instamojo") {
-              const url = `${
-                process.env.NEXT_PUBLIC_BASE_URL
-              }user/checkout/pay-with-instamojo?token=${
-                auth().access_token
-              }&shipping_method_id=${parseInt(
-                selectedRule
-              )}&shipping_address_id=${selectedShipping}&coupon=${
-                couponCode && couponCode.code
-              }&billing_address_id=${selectedBilling}&request_from=react_web&frontend_success_url=${
-                typeof window !== "undefined" && window.location.origin
-                  ? window.location.origin + "/order/"
-                  : ""
-              }&frontend_faild_url=${
-                typeof window !== "undefined" && window.location.origin
-                  ? window.location.origin + "/payment-faild"
+                  ? window.location.origin + "/payment-failed"
                   : ""
               }`;
               router.push(url);
@@ -742,9 +559,9 @@ function CheakoutPage() {
                 typeof window !== "undefined" && window.location.origin
                   ? window.location.origin + "/order/"
                   : ""
-              }&frontend_faild_url=${
+              }&frontend_failed_url=${
                 typeof window !== "undefined" && window.location.origin
-                  ? window.location.origin + "/payment-faild"
+                  ? window.location.origin + "/payment-failed"
                   : ""
               }`;
               router.push(url);
@@ -775,28 +592,6 @@ function CheakoutPage() {
                   console.log(err);
                   toast.success(err.response && err.response.message);
                 });
-            } else if (selectPayment && selectPayment === "sslcommerce") {
-              const url = `${
-                process.env.NEXT_PUBLIC_BASE_URL
-              }user/checkout/sslcommerz-web-view?token=${
-                auth().access_token
-              }&shipping_method_id=${parseInt(
-                selectedRule
-              )}&shipping_address_id=${selectedShipping}&coupon=${
-                couponCode && couponCode.code
-              }&billing_address_id=${selectedBilling}&request_from=react_web&frontend_success_url=${
-                typeof window !== "undefined" && window.location.origin
-                  ? window.location.origin + "/order/"
-                  : ""
-              }&frontend_faild_url=${
-                typeof window !== "undefined" && window.location.origin
-                  ? window.location.origin + "/payment-faild"
-                  : ""
-              }`;
-
-              router.push(url);
-              localStorage.removeItem("coupon_set_date");
-              localStorage.removeItem("coupon");
             } else {
               toast.error(langCntnt && langCntnt.Select_your_payment_system);
             }
@@ -1859,7 +1654,7 @@ function CheakoutPage() {
                             )}
                           </div>
                         )}
-                    
+
                         {payStackStatus && (
                           <div
                             onClick={() => setPaymentMethod("paystack")}
@@ -1909,136 +1704,49 @@ function CheakoutPage() {
                             )}
                           </div>
                         )}
-                       
-                   
+
+                        {remitaStatus && (
+                          <div
+                            onClick={() => setPaymentMethod("remita")}
+                            className={`payment-item text-center bg-[#F8F8F8] relative w-full h-[50px] font-bold text-sm text-white text-qpurple  rounded flex justify-center items-center px-3 uppercase rounded cursor-pointer ${
+                              selectPayment === "remita"
+                                ? "border-2 border-qpurple"
+                                : "border border-qpurplelow/10"
+                            }`}
+                          >
+                            <div className="w-full flex justify-center">
+                              <span>
+                                <img
+                                  src={`/images/remita-logo-svg.svg`}
+                                  alt=""
+                                  height="50"
+                                  width="100"
+                                />
+                              </span>
+                            </div>
+                            {selectPayment === "remita" && (
+                              <span
+                                data-aos="zoom-in"
+                                className="absolute text-white z-10 w-6 h-6 rounded-full bg-qpurple -right-2.5 -top-2.5"
+                              >
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  className="h-6 w-6"
+                                  viewBox="0 0 20 20"
+                                  fill="currentColor"
+                                >
+                                  <path
+                                    fillRule="evenodd"
+                                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                    clipRule="evenodd"
+                                  />
+                                </svg>
+                              </span>
+                            )}
+                          </div>
+                        )}
                       </div>
                     </div>
-                    {/*stripe*/}
-                    {selectPayment === "stripe" && (
-                      <>
-                        <div
-                          onClick={() => setPaymentMethod("")}
-                          className="w-full h-full fixed left-0 top-0 z-10"
-                        ></div>
-                        <div
-                          style={{ zIndex: "999" }}
-                          data-aos="zoom-in"
-                          className="w-[359px] bg-white shadow-2xl p-2 rounded absolute -left-10 top-0"
-                        >
-                          <div className="stripe-inputs">
-                            <div className="input-item mb-5">
-                              <InputCom
-                                placeholder="Number"
-                                name="number"
-                                type="text"
-                                inputClasses="h-[50px]"
-                                value={strpeNumber}
-                                inputHandler={(e) =>
-                                  setStrpeNumber(e.target.value)
-                                }
-                                error={
-                                  !!(
-                                    stripeError &&
-                                    Object.hasOwn(stripeError, "card_number")
-                                  )
-                                }
-                              />
-                              {stripeError &&
-                              Object.hasOwn(stripeError, "card_number") ? (
-                                <span className="text-sm mt-1 text-qred">
-                                  {stripeError.card_number[0]}
-                                </span>
-                              ) : (
-                                ""
-                              )}
-                            </div>
-                            <div className="flex space-x-2 items-center">
-                              <div className="input-item mb-5">
-                                <InputCom
-                                  placeholder="Expire Date"
-                                  name="date"
-                                  type="date"
-                                  inputClasses="h-[50px]"
-                                  value={expireDate && expireDate.value}
-                                  inputHandler={(e) => dateHandler(e)}
-                                  error={
-                                    !!(
-                                      stripeError &&
-                                      Object.hasOwn(stripeError, "month") &&
-                                      Object.hasOwn(stripeError, "year")
-                                    )
-                                  }
-                                />
-                                {stripeError &&
-                                Object.hasOwn(stripeError, "month") &&
-                                Object.hasOwn(stripeError, "year") ? (
-                                  <span className="text-sm mt-1 text-qred">
-                                    Date in required
-                                  </span>
-                                ) : (
-                                  ""
-                                )}
-                              </div>
-                              <div className="input-item mb-5">
-                                <InputCom
-                                  placeholder="CVV"
-                                  name="cvv"
-                                  type="text"
-                                  inputClasses="h-[50px]"
-                                  value={cvv}
-                                  inputHandler={(e) => setCvv(e.target.value)}
-                                  error={
-                                    !!(
-                                      stripeError &&
-                                      Object.hasOwn(stripeError, "cvv")
-                                    )
-                                  }
-                                />
-                                {stripeError &&
-                                Object.hasOwn(stripeError, "cvv") ? (
-                                  <span className="text-sm mt-1 text-qred">
-                                    {stripeError.cvv[0]}
-                                  </span>
-                                ) : (
-                                  ""
-                                )}
-                              </div>
-                            </div>
-                            <div className="input-item mb-5">
-                              <InputCom
-                                placeholder="Card Holder"
-                                name="card"
-                                type="text"
-                                inputClasses="h-[50px]"
-                                value={cardHolderName}
-                                inputHandler={(e) =>
-                                  setHolderName(e.target.value)
-                                }
-                              />
-                            </div>
-                            <button
-                              type="button"
-                              onClick={placeOrderHandler}
-                              className="w-full"
-                            >
-                              <div className="w-full h-[50px] rounded transition-common bg-qpurple hover:bg-qpurplelow/10 hover:text-qpurple text-white flex justify-center items-center">
-                                <span className="text-sm font-semibold">
-                                  {langCntnt && langCntnt.Place_Order_Now}
-                                </span>
-                                {strpLoad && (
-                                  <span
-                                    className="w-5 "
-                                    style={{ transform: "scale(0.3)" }}
-                                  >
-                                    <LoaderStyleOne />
-                                  </span>
-                                )}
-                              </div>
-                            </button>
-                          </div>
-                        </div>
-                      </>
-                    )}
                   </div>
                   {selectPayment === "bankpayment" && (
                     <div className="w-full bank-inputs mt-5">
