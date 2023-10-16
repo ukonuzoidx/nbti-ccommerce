@@ -182,7 +182,7 @@ function Profile() {
             </div>
             <div className="profile-wrapper w-full mt-8 xl:flex xl:space-x-10 ">
               <div className="xl:w-[236px] w-full xl:min-h-[600px] xl:border-r border-qpurplelow/10 mb-10 xl:mb-0">
-                <div className="flex xl:flex-col flex-row xl:space-y-10 items-center overflow-x-scroll gap-x-6 gap-y-3 xl:gap-y-0 xl:gap-0">
+                <div className="flex xl:flex-col flex-row xl:space-y-10 mobile-tab gap-x-6 gap-y-3 xl:gap-y-0 xl:gap-0">
                   <div className="item group">
                     <Link href="/profile#dashboard">
                       <div
@@ -193,7 +193,7 @@ function Profile() {
                         <span>
                           <IcoDashboard />
                         </span>
-                        <span className=" font-normal text-base capitalize">
+                        <span className=" font-normal text-base capitalize mobile-tab-text">
                           {langCntnt && langCntnt.dashboard}
                         </span>
                       </div>
@@ -209,7 +209,7 @@ function Profile() {
                         <span>
                           <IcoPeople />
                         </span>
-                        <span className=" font-normal text-base capitalize">
+                        <span className=" font-normal text-base capitalize mobile-tab-text">
                           {langCntnt && langCntnt.Personal_Info}
                         </span>
                       </div>
@@ -225,7 +225,7 @@ function Profile() {
                         <span>
                           <IcoCart />
                         </span>
-                        <span className=" font-normal text-base capitalize">
+                        <span className=" font-normal text-base capitalize mobile-tab-text">
                           {langCntnt && langCntnt.Order}
                         </span>
                       </div>
@@ -241,7 +241,7 @@ function Profile() {
                         <span>
                           <IcoLove />
                         </span>
-                        <span className=" font-normal text-base capitalize">
+                        <span className=" font-normal text-base capitalize mobile-tab-text">
                           {langCntnt && langCntnt.Wishlist}
                         </span>
                       </div>
@@ -257,7 +257,7 @@ function Profile() {
                         <span>
                           <IcoAdress />
                         </span>
-                        <span className=" font-normal text-base capitalize">
+                        <span className=" font-normal text-base capitalize mobile-tab-text">
                           {langCntnt && langCntnt.Address}
                         </span>
                       </div>
@@ -273,7 +273,7 @@ function Profile() {
                         <span>
                           <IcoReviewHand />
                         </span>
-                        <span className=" font-normal text-base capitalize">
+                        <span className=" font-normal text-base capitalize mobile-tab-text">
                           {langCntnt && langCntnt.Reviews}
                         </span>
                       </div>
@@ -289,7 +289,7 @@ function Profile() {
                         <span>
                           <IcoPassword />
                         </span>
-                        <span className=" font-normal text-base capitalize">
+                        <span className=" font-normal text-base capitalize mobile-tab-text">
                           {langCntnt && langCntnt.Change_Password}
                         </span>
                       </div>
@@ -301,7 +301,7 @@ function Profile() {
                   {/*      <span>*/}
                   {/*        <IcoSupport />*/}
                   {/*      </span>*/}
-                  {/*      <span className=" font-normal text-base capitalize">*/}
+                  {/*      <span className=" font-normal text-base capitalize mobile-tab-text">*/}
                   {/*        Support Ticket*/}
                   {/*      </span>*/}
                   {/*    </div>*/}
@@ -317,7 +317,7 @@ function Profile() {
                       <span>
                         <IcoLogout />
                       </span>
-                      <span className=" font-normal text-base capitalize">
+                      <span className=" font-normal text-base capitalize mobile-tab-text">
                         {langCntnt && langCntnt.Logout}
                       </span>
                     </div>
