@@ -1,7 +1,7 @@
 import React from "react";
-import CardPage from "./../src/components/CartPage/index";
 import PageHead from "../src/components/Helpers/PageHead";
 import Layout from "../src/components/Partials/Layout";
+import CardPage from "./../src/components/CartPage/index";
 
 function cart() {
   return (

@@ -1,74 +1,28 @@
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import Link from "next/link";
+import { useState } from "react";
+import { useDispatch } from "react-redux";
 import settings from "../../../utils/settings";
+import { removeFromCart } from "../../store/Cart";
 import InputQuantityCom from "../Helpers/InputQuantityCom";
 import CheckProductIsExistsInFlashSale from "../Shared/CheckProductIsExistsInFlashSale";
-import languageModel from "../../../utils/languageModel";
-import Link from "next/link";
 
-export default function ProductsTable({
-  className,
-  cartItems,
-  deleteItem,
-  calCPriceDependQunatity,
-  incrementQty,
-  decrementQty,
-}) {
+export default function ProductsTable({ className, cartItems }) {
   const [storeCarts, setItems] = useState(null);
   const [langCntnt, setLangCntnt] = useState(null);
-  useEffect(() => {
-    setLangCntnt(languageModel());
-  }, []);
-  const price = (item) => {
-    if (item) {
-      if (item.product.offer_price) {
-        //67.89
-        if (item.variants && item.variants.length > 0) {
-          const prices = item.variants.map((item) =>
-            item.variant_item ? parseFloat(item.variant_item.price) : 0
-          );
-          const sumVarient = prices.reduce((p, c) => p + c);
-          return parseFloat(item.product.offer_price) + sumVarient;
-        } else {
-          return parseFloat(item.product.offer_price);
-        }
-      } else {
-        if (item.variants && item.variants.length > 0) {
-          const prices = item.variants.map((item) =>
-            item.variant_item ? parseFloat(item.variant_item.price) : 0
-          );
-          const sumVarient = prices.reduce((p, c) => p + c);
-          return parseFloat(item.product.price) + sumVarient;
-        } else {
-          return parseFloat(item.product.price);
-        }
-      }
-    }
-  };
-  const totalPriceCalc = (item) => {
-    if (item) {
-      const prices =
-        item.variants.length > 0
-          ? item.variants.map((item) =>
-              item.variant_item ? parseInt(item.variant_item.price) : 0
-            )
-          : false;
-      const sumVarient = prices ? prices.reduce((p, c) => p + c) : false;
-      if (sumVarient) {
-        const priceWithQty = sumVarient * parseInt(item.qty);
-        return parseInt(item.totalPrice) + priceWithQty;
-      } else {
-        return item.totalPrice * 1;
-      }
-    }
-  };
-  useEffect(() => {
-    setItems(cartItems);
-  });
+
   const { currency_icon } = settings();
+  const dispatch = useDispatch();
+
+  const deleteItem = (id) => {
+    if (id) {
+      dispatch(removeFromCart(id));
+    }
+  };
+
   return (
     <div className={`w-full ${className || ""}`}>
-      <div className="relative w-full overflow-x-auto rounded overflow-hidden border border-qpurplelow/10">
+      <div className="relative w-full overflow-hidden overflow-x-auto border rounded border-qpurplelow/10">
         <table className="w-full text-sm text-left text-qgray dark:text-gray-400">
           <tbody>
             {/* table heading */}
@@ -79,7 +33,7 @@ export default function ProductsTable({
               <td className="py-4 whitespace-nowrap text-center min-w-[300px]">
                 {langCntnt && langCntnt.Price}
               </td>
-              <td className="py-4 whitespace-nowrap  text-center ">
+              <td className="py-4 text-center whitespace-nowrap ">
                 {langCntnt && langCntnt.quantity}
               </td>
               <td className="py-4 whitespace-nowrap  text-center min-w-[300px]">
@@ -88,79 +42,73 @@ export default function ProductsTable({
               <td className="py-4 whitespace-nowrap text-right w-[114px]"></td>
             </tr>
             {/* table heading end */}
-            {storeCarts &&
-              storeCarts.length > 0 &&
-              storeCarts.map((item) => (
+            {cartItems.length > 0 &&
+              cartItems.map((item) => (
                 <tr
                   key={item.id}
                   className="bg-white border-b border-qpurplelow/10 hover:bg-gray-50"
                 >
                   <td className="pl-10  py-4  w-[380px]">
-                    <div className="flex space-x-6 items-center">
+                    <div className="flex items-center space-x-6">
                       <div className="w-[80px] h-[80px] rounded overflow-hidden flex justify-center items-center border border-qpurplelow/10 relative">
                         <Image
                           layout="fill"
-                          src={`${
-                            process.env.NEXT_PUBLIC_BASE_URL +
-                            item.product.thumb_image
-                          }`}
+                          src={item.image}
                           alt="product"
-                          className="w-full h-full object-contain"
+                          className="object-contain w-full h-full"
                         />
                       </div>
-                      <div className="flex-1 flex flex-col">
+                      <div className="flex flex-col flex-1">
                         <Link
                           href={{
                             pathname: "/single-product",
-                            query: { slug: item.product.slug },
+                            query: { slug: item.slug },
                           }}
                         >
                           <a rel="noopener noreferrer">
                             <h1 className="font-medium text-[15px] text-qblack hover:text-qpurple">
-                              {item.product.name}
+                              {item.title}
                             </h1>
                           </a>
                         </Link>
                       </div>
                     </div>
                   </td>
-                  <td className="text-center py-4 px-2">
-                    <div className="flex space-x-1 items-center justify-center">
+                  <td className="px-2 py-4 text-center">
+                    <div className="flex items-center justify-center space-x-1">
                       <span className="text-[15px] text-qblack font-medium">
                         {
                           <CheckProductIsExistsInFlashSale
-                            id={item.product_id}
-                            price={price(item)}
+                            id={item.id}
+                            price={item.price}
                           />
                         }
                       </span>
                     </div>
                   </td>
-                  <td className=" py-4">
-                    <div className="flex justify-center items-center">
+                  <td className="py-4 ">
+                    <div className="flex items-center justify-center">
                       <InputQuantityCom
-                        decrementQty={decrementQty}
-                        incrementQty={incrementQty}
-                        calcTotalPrice={calCPriceDependQunatity}
-                        productId={item.product.id}
-                        cartId={item.id}
-                        qyt={parseInt(item.qty)}
+                        productId={item.id}
+                        qyt={item.quantity}
                       />
                     </div>
                   </td>
                   <td className="text-right py-4 w-[200px]">
-                    <div className="flex space-x-1 items-center justify-center">
+                    <div className="flex items-center justify-center space-x-1">
                       <span className="text-[15px] text-qblack font-medium">
-                        <CheckProductIsExistsInFlashSale
+                        {/* <CheckProductIsExistsInFlashSale
                           id={item.product_id}
-                          price={totalPriceCalc(item)}
-                        />
+                          price={item.totalPrice}
+                        /> */}
+                        {currency_icon}
+                        {item.totalPrice}
                         {/*{totalPriceCalc(item)}*/}
                       </span>
                     </div>
                   </td>
-                  <td className="text-right py-4">
-                    <div className="flex space-x-1 items-center justify-center re">
+                  <td className="py-4 text-right">
+                    <div className="flex items-center justify-center space-x-1 re">
                       <span
                         onClick={() => deleteItem(item.id)}
                         className="cursor-pointer text-qgray w-2.5 h-2.5 transform scale-100 hover:scale-110 hover:text-qred transition duration-300 ease-in-out "

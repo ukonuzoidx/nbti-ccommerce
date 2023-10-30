@@ -2,109 +2,33 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { toast } from "react-toastify";
-import apiRequest from "../../../utils/apiRequest";
-import auth from "../../../utils/auth";
-import settings from "../../../utils/settings";
-import { fetchCart } from "../../store/Cart";
-import CheckProductIsExistsInFlashSale from "../Shared/CheckProductIsExistsInFlashSale";
 import languageModel from "../../../utils/languageModel";
+import settings from "../../../utils/settings";
+import { removeFromCart } from "../../store/Cart";
+import CheckProductIsExistsInFlashSale from "../Shared/CheckProductIsExistsInFlashSale";
 
 export default function Cart({ className }) {
   const { websiteSetup } = useSelector((state) => state.websiteSetup);
   const dispatch = useDispatch();
-  const { cart } = useSelector((state) => state.cart);
-  const [getCarts, setGetCarts] = useState(null);
-  const [getAllPrice, setGetAllPrice] = useState(null);
+  const { products } = useSelector((state) => state.cart);
   const [langCntnt, setLangCntnt] = useState(null);
   const [totalPrice, setTotalPrice] = useState(null);
+
   useEffect(() => {
-    setTotalPrice(
-      getAllPrice && getAllPrice.reduce((prev, curr) => prev + curr)
+    const totalPrice = products.reduce(
+      (accumulator, item) => accumulator + item.totalPrice,
+      0
     );
-  }, [getAllPrice]);
+    setTotalPrice(totalPrice);
+  }, [products]);
 
   useEffect(() => {
     setLangCntnt(languageModel());
   }, []);
-  useEffect(() => {
-    cart && setGetCarts(cart.cartProducts);
-  }, [cart]);
-  const checkProductExistsInFlashSale = (id, price) => {
-    if (websiteSetup) {
-      const flashSaleOffer =
-        websiteSetup.payload.flashSale && websiteSetup.payload.flashSale.offer;
-
-      const flashSaleIds =
-        websiteSetup.payload.flashSaleProducts.length > 0 &&
-        websiteSetup.payload.flashSaleProducts.find(
-          (item) => parseInt(item.product_id) === parseInt(id)
-        );
-      if (flashSaleOffer && flashSaleIds) {
-        const offer = parseInt(flashSaleOffer);
-
-        const discountPrice = (offer / 100) * price; //confusion
-        const mainPrice = price - discountPrice;
-        return mainPrice;
-      } else {
-        return price;
-      }
-    }
-  };
-  useEffect(() => {
-    if (getCarts && getCarts.length > 0) {
-      setGetAllPrice(
-        getCarts.map((v) => {
-          if (v.product.offer_price) {
-            if (v.variants && v.variants.length > 0) {
-              const prices = v.variants.map((item) =>
-                item.variant_item ? parseInt(item.variant_item.price) : 0
-              );
-              const sumCal = prices.reduce((p, c) => p + c);
-              const v_price = sumCal + parseInt(v.product.offer_price);
-              return checkProductExistsInFlashSale(v.product_id, v_price);
-            } else {
-              const wo_v_price = parseInt(v.product.offer_price);
-              return checkProductExistsInFlashSale(v.product_id, wo_v_price);
-            }
-          } else {
-            if (v.variants && v.variants.length > 0) {
-              const prices = v.variants.map((item) =>
-                item.variant_item ? parseInt(item.variant_item.price) : 0
-              );
-              const sumCal = prices.reduce((p, c) => p + c);
-              const v_price = sumCal + parseInt(v.product.price);
-              return checkProductExistsInFlashSale(v.product_id, v_price);
-            } else {
-              const wo_v_price = parseInt(v.product.price);
-              return checkProductExistsInFlashSale(v.product_id, wo_v_price);
-            }
-          }
-        })
-      );
-    } else {
-      setGetAllPrice(null);
-    }
-  }, [getCarts]);
 
   const deleteItem = (id) => {
-    if (auth()) {
-      apiRequest
-        .deleteCartItem({
-          id: id,
-          token: auth().access_token,
-        })
-        .then(() => {
-          toast.warn(langCntnt && langCntnt.Remove_from_Cart, {
-            autoClose: 1000,
-          });
-          dispatch(fetchCart());
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    } else {
-      return false;
+    if (id) {
+      dispatch(removeFromCart(id));
     }
   };
 
@@ -142,32 +66,25 @@ export default function Cart({ className }) {
           className || ""
         }`}
       >
-        {getCarts && getCarts.length > 0 ? (
+        {products && products.length > 0 ? (
           <div className="w-full h-full">
             <div className="product-items h-[310px] overflow-y-scroll">
               <ul>
-                {getCarts &&
-                  getCarts.length > 0 &&
-                  getCarts.map((item, i) => (
-                    <li
-                      key={item.id}
-                      className="w-full h-full flex justify-between"
-                    >
+                {products.map(
+                  ({ image, id, title, price, offer_price, quantity }) => (
+                    <li key={id} className="flex justify-between w-full h-full">
                       <div className="flex space-x-[6px] justify-center items-center px-4 my-[20px]">
                         <div className="w-[65px] h-full relative">
                           <Image
                             layout="fill"
-                            src={`${
-                              process.env.NEXT_PUBLIC_BASE_URL +
-                              item.product.thumb_image
-                            }`}
-                            alt=""
-                            className="w-full h-full object-contain"
+                            src={image}
+                            alt={title}
+                            className="object-contain w-full h-full"
                           />
                         </div>
-                        <div className="flex-1 h-full flex flex-col justify-center ">
+                        <div className="flex flex-col justify-center flex-1 h-full ">
                           <h3 className="title mb-2 text-[13px] font-600 text-qblack leading-4 line-clamp-2 hover:text-qpurple">
-                            {item.product.name}
+                            {title}
                           </h3>
 
                           <p className="price">
@@ -177,16 +94,17 @@ export default function Cart({ className }) {
                             >
                               {
                                 <CheckProductIsExistsInFlashSale
-                                  id={item.product_id}
-                                  price={price(item)}
+                                  id={id}
+                                  price={offer_price}
                                 />
                               }
                             </span>
                           </p>
+                          <p>quantity: {quantity}</p>
                         </div>
                       </div>
                       <span
-                        onClick={() => deleteItem(item.id)}
+                        onClick={() => deleteItem(id)}
                         className="mt-[20px] mr-[15px] inline-flex cursor-pointer"
                       >
                         <svg
@@ -201,7 +119,8 @@ export default function Cart({ className }) {
                         </svg>
                       </span>
                     </li>
-                  ))}
+                  )
+                )}
               </ul>
             </div>
             <div className="w-full px-4 mt-[20px] mb-[12px]">
@@ -227,7 +146,7 @@ export default function Cart({ className }) {
                 </Link>
                 <Link href="/checkout">
                   <div className="w-full h-[50px] cursor-pointer">
-                    <div className="transition-common bg-qpurple hover:bg-qpurplelow/10 hover:text-qpurple text-white flex justify-center items-center  w-full h-full rounded">
+                    <div className="flex items-center justify-center w-full h-full text-white rounded transition-common bg-qpurple hover:bg-qpurplelow/10 hover:text-qpurple">
                       <span className="text-sm">
                         {langCntnt && langCntnt.Checkout_Now}
                       </span>
@@ -247,11 +166,11 @@ export default function Cart({ className }) {
           </div>
         ) : (
           <div className="w-full">
-            <div className="product-items my-10">
-              <p className="text-sm text-gray-400 mb-5 text-center">
+            <div className="my-10 product-items">
+              <p className="mb-5 text-sm text-center text-gray-400">
                 {langCntnt && langCntnt.No_items_found}
               </p>
-              <p className="text-sm text-gray-400  text-center">
+              <p className="text-sm text-center text-gray-400">
                 <Link
                   href={{
                     pathname: "/products",
@@ -259,7 +178,7 @@ export default function Cart({ className }) {
                   passHref
                 >
                   <a rel="noopener noreferrer">
-                    <span className="text-sm text-qpurple underline font-semibold">
+                    <span className="text-sm font-semibold underline text-qpurple">
                       {langCntnt && langCntnt.Shop_Now}
                     </span>
                   </a>
