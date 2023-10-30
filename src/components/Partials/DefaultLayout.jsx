@@ -181,7 +181,7 @@ function DefaultLayout({ children }) {
                     err.response.data.message
                 );
               });
-            dispatch(fetchCart());
+            // dispatch(fetchCart());
           }
         }
       }
@@ -220,7 +220,7 @@ function DefaultLayout({ children }) {
               >
                 <div
                   onClick={() => getLoginContexts.handlerPopup(false)}
-                  className="w-full h-full fixed left-0 top-0 bg-black bg-opacity-50"
+                  className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50"
                 ></div>
                 <div
                   data-aos="fade-up"

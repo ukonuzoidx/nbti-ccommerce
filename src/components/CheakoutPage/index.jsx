@@ -3,31 +3,27 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
+import isAuth from "../../../Middleware/isAuth";
+import DateFormat from "../../../utils/DateFormat";
 import apiRequest from "../../../utils/apiRequest";
 import auth from "../../../utils/auth";
+import languageModel from "../../../utils/languageModel";
+import settings from "../../../utils/settings";
 import wordCount from "../../../utils/wordCount";
 import { fetchCart } from "../../store/Cart";
+import EmptyCardError from "../EmptyCardError";
 import InputCom from "../Helpers/InputCom";
 import LoaderStyleOne from "../Helpers/Loaders/LoaderStyleOne";
 import PageTitle from "../Helpers/PageTitle";
 import Selectbox from "../Helpers/Selectbox";
-import isAuth from "../../../Middleware/isAuth";
-import DateFormat from "../../../utils/DateFormat";
-import settings from "../../../utils/settings";
-import Sslcommerce from "../Helpers/icons/Sslcommerce";
 import CheckProductIsExistsInFlashSale from "../Shared/CheckProductIsExistsInFlashSale";
-import languageModel from "../../../utils/languageModel";
-import Link from "next/link";
-import ShopNowBtn from "../Helpers/Buttons/ShopNowBtn";
-import EmptyCardError from "../EmptyCardError";
 
 function CheakoutPage() {
   const { websiteSetup } = useSelector((state) => state.websiteSetup);
   const { currency_icon } = settings();
   const router = useRouter();
   const dispatch = useDispatch();
-  const { cart } = useSelector((state) => state.cart);
-  const [carts, setCarts] = useState(null);
+  const { products } = useSelector((state) => state.cart);
   const [totalWeight, setTotalWeight] = useState(null);
   const [totalQty, setQty] = useState(null);
   const [fName, setFname] = useState("");
@@ -128,12 +124,14 @@ function CheakoutPage() {
       return false;
     }
   };
+
   const dateHandler = (e) => {
     setExpireDate({
       value: e.target.value,
       formated: DateFormat(e.target.value, false),
     });
   };
+
   const getAllAddress = () => {
     axios
       .get(
@@ -202,6 +200,7 @@ function CheakoutPage() {
         console.log(err);
       });
   };
+
   useEffect(() => {
     if (auth()) {
       getAllAddress();
@@ -221,6 +220,7 @@ function CheakoutPage() {
         });
     }
   }, []);
+
   const getState = (value) => {
     if (auth() && value) {
       setCountry(value.id);
@@ -241,6 +241,7 @@ function CheakoutPage() {
       return false;
     }
   };
+
   const getcity = (value) => {
     if (auth() && value) {
       setState(value.id);
@@ -260,11 +261,13 @@ function CheakoutPage() {
       return false;
     }
   };
+
   const selectCity = (value) => {
     if (auth() && value) {
       setcity(value.id);
     }
   };
+
   const saveAddress = async () => {
     setLoading(true);
     if (auth()) {
@@ -306,33 +309,7 @@ function CheakoutPage() {
       return false;
     }
   };
-  // parseInt(item.qty)
-  useEffect(() => {
-    setCarts(cart && cart.cartProducts);
 
-    //total weight
-    const ttwList =
-      cart &&
-      cart.cartProducts.length > 0 &&
-      cart.cartProducts.map(
-        (item) => parseInt(item.product.weight) * parseInt(item.qty)
-      );
-    const ttw =
-      ttwList &&
-      ttwList.length > 0 &&
-      ttwList.reduce((prev, curr) => parseInt(prev) + parseInt(curr), 0);
-    setTotalWeight(ttw && ttw);
-    //total qty
-    const tqList =
-      cart &&
-      cart.cartProducts.length > 0 &&
-      cart.cartProducts.map((item) => parseInt(item.qty));
-    const tq =
-      tqList &&
-      tqList.length > 0 &&
-      tqList.reduce((prev, curr) => parseInt(prev) + parseInt(curr), 0);
-    setQty(tq && tq);
-  }, [cart]);
   const checkProductExistsInFlashSale = (id, price) => {
     if (websiteSetup) {
       const flashSaleOffer =
@@ -352,56 +329,60 @@ function CheakoutPage() {
       }
     }
   };
-  const totalPrice = subTotal && subTotal.reduce((prev, curr) => prev + curr);
-  useEffect(() => {
-    if (carts && carts.length > 0) {
-      setSubTotal(
-        carts.map((v) => {
-          let prices = [];
-          v.variants.map(
-            (item) =>
-              item.variant_item &&
-              prices.push(parseInt(item.variant_item.price))
-          );
-          const sumCal = prices.length > 0 && prices.reduce((p, c) => p + c);
-          if (v.product.offer_price) {
-            if (v.variants && v.variants.length > 0) {
-              const v_price = sumCal + parseInt(v.product.offer_price);
 
-              const checkFlshPrdct = checkProductExistsInFlashSale(
-                v.product_id,
-                v_price
-              );
-              return checkFlshPrdct * v.qty;
-              // return checkProductExistsInFlashSale(v.product_id, v_price);
-            } else {
-              const wo_v_price = checkProductExistsInFlashSale(
-                v.product_id,
-                parseInt(v.product.offer_price)
-              );
-              return wo_v_price * v.qty;
-            }
-          } else {
-            if (v.variants && v.variants.length > 0) {
-              const v_price = sumCal + parseInt(v.product.price);
-              const checkFlshPrdct = checkProductExistsInFlashSale(
-                v.product_id,
-                v_price
-              );
-              return checkFlshPrdct * v.qty;
-            } else {
-              const wo_v_price = checkProductExistsInFlashSale(
-                v.product_id,
-                parseInt(v.product.price)
-              );
-              return wo_v_price * v.qty;
-            }
-          }
-        })
-      );
-    }
-  }, [carts]);
+  const totalPrice = subTotal && subTotal.reduce((prev, curr) => prev + curr);
+
+  // useEffect(() => {
+  //   if (products && products.length > 0) {
+  //     setSubTotal(
+  //       products.map((v) => {
+  //         let prices = [];
+  //         v.variants.map(
+  //           (item) =>
+  //             item.variant_item &&
+  //             prices.push(parseInt(item.variant_item.price))
+  //         );
+  //         const sumCal = prices.length > 0 && prices.reduce((p, c) => p + c);
+  //         if (v.product.offer_price) {
+  //           if (v.variants && v.variants.length > 0) {
+  //             const v_price = sumCal + parseInt(v.product.offer_price);
+
+  //             const checkFlshPrdct = checkProductExistsInFlashSale(
+  //               v.product_id,
+  //               v_price
+  //             );
+  //             return checkFlshPrdct * v.qty;
+  //             // return checkProductExistsInFlashSale(v.product_id, v_price);
+  //           } else {
+  //             const wo_v_price = checkProductExistsInFlashSale(
+  //               v.product_id,
+  //               parseInt(v.product.offer_price)
+  //             );
+  //             return wo_v_price * v.qty;
+  //           }
+  //         } else {
+  //           if (v.variants && v.variants.length > 0) {
+  //             const v_price = sumCal + parseInt(v.product.price);
+  //             const checkFlshPrdct = checkProductExistsInFlashSale(
+  //               v.product_id,
+  //               v_price
+  //             );
+  //             return checkFlshPrdct * v.qty;
+  //           } else {
+  //             const wo_v_price = checkProductExistsInFlashSale(
+  //               v.product_id,
+  //               parseInt(v.product.price)
+  //             );
+  //             return wo_v_price * v.qty;
+  //           }
+  //         }
+  //       })
+  //     );
+  //   }
+  // }, [products]);
+
   const [mainTotalPrice, setMainTotalPrice] = useState(null);
+
   useEffect(() => {
     if (shippingCharge) {
       setMainTotalPrice((totalPrice + parseFloat(shippingCharge)).toFixed(2));
@@ -409,6 +390,7 @@ function CheakoutPage() {
       setMainTotalPrice(parseFloat(totalPrice).toFixed(2));
     }
   });
+
   const price = (item) => {
     if (item) {
       if (item.product.offer_price) {
@@ -435,6 +417,7 @@ function CheakoutPage() {
       }
     }
   };
+
   const shippingHandler = (addressId, cityId) => {
     setShipping(addressId);
     const getRules =
@@ -463,6 +446,7 @@ function CheakoutPage() {
       setShippingRulesByCityId(defaultRule);
     }
   };
+
   useEffect(() => {
     if (
       addresses &&
@@ -481,6 +465,7 @@ function CheakoutPage() {
     setSelectedRule(e.target.value);
     setShippingCharge(price);
   };
+
   //delete address
   const deleteAddress = (id) => {
     if (auth()) {
@@ -496,6 +481,7 @@ function CheakoutPage() {
         });
     }
   };
+
   const placeOrderHandler = async () => {
     if (auth()) {
       if (selectedBilling && selectedShipping) {
@@ -607,7 +593,7 @@ function CheakoutPage() {
     }
   };
 
-  if (carts && carts.length > 0) {
+  if (products.length > 0) {
     return (
       <div className="checkout-page-wrapper w-full bg-white pb-[120px]">
         <div className="w-full mb-5">
@@ -619,17 +605,17 @@ function CheakoutPage() {
             ]}
           />
         </div>
-        <div className="checkout-main-content w-full">
-          <div className="container-x mx-auto ">
+        <div className="w-full checkout-main-content">
+          <div className="mx-auto container-x ">
             <div className="w-full lg:flex lg:space-x-[30px]">
-              <div className="lg:w-4/6 w-full">
-                <h1 className="sm:text-2xl text-xl text-qblack font-medium mt-5 mb-5">
+              <div className="w-full lg:w-4/6">
+                <h1 className="mt-5 mb-5 text-xl font-medium sm:text-2xl text-qblack">
                   {langCntnt && langCntnt.Addresses}
                 </h1>
                 {!newAddress && (
-                  <div className="addresses-widget w-full">
-                    <div className="sm:flex justify-between items-center w-full mb-5">
-                      <div className="bg-qpurplelow/10 border border-qpurple rounded p-2">
+                  <div className="w-full addresses-widget">
+                    <div className="items-center justify-between w-full mb-5 sm:flex">
+                      <div className="p-2 border rounded bg-qpurplelow/10 border-qpurple">
                         <button
                           onClick={() => setActiveAddress("billing")}
                           type="button"
@@ -667,7 +653,7 @@ function CheakoutPage() {
                     {activeAddress === "billing" ? (
                       <div
                         data-aos="zoom-in"
-                        className="grid sm:grid-cols-2 grid-cols-1 gap-3"
+                        className="grid grid-cols-1 gap-3 sm:grid-cols-2"
                       >
                         {addresses &&
                           addresses.length > 0 &&
@@ -681,7 +667,7 @@ function CheakoutPage() {
                                   : "border-transparent bg-primarygray"
                               }`}
                             >
-                              <div className="flex justify-between items-center">
+                              <div className="flex items-center justify-between">
                                 <p className="title text-[22px] font-semibold">
                                   {langCntnt && langCntnt.Address} #{i + 1}
                                 </p>
@@ -718,7 +704,7 @@ function CheakoutPage() {
                                           {langCntnt && langCntnt.Name}:
                                         </div>
                                       </td>
-                                      <td className="text-base text-qblack line-clamp-1 font-medium">
+                                      <td className="text-base font-medium text-qblack line-clamp-1">
                                         {address.name}
                                       </td>
                                     </tr>
@@ -728,7 +714,7 @@ function CheakoutPage() {
                                           {langCntnt && langCntnt.Email}:
                                         </div>
                                       </td>
-                                      <td className="text-base text-qblack line-clamp-1 font-medium">
+                                      <td className="text-base font-medium text-qblack line-clamp-1">
                                         {address.email}
                                       </td>
                                     </tr>
@@ -738,7 +724,7 @@ function CheakoutPage() {
                                           {langCntnt && langCntnt.phone}:
                                         </div>
                                       </td>
-                                      <td className="text-base text-qblack line-clamp-1 font-medium">
+                                      <td className="text-base font-medium text-qblack line-clamp-1">
                                         {address.phone}
                                       </td>
                                     </tr>
@@ -748,7 +734,7 @@ function CheakoutPage() {
                                           {langCntnt && langCntnt.Country}:
                                         </div>
                                       </td>
-                                      <td className="text-base text-qblack line-clamp-1 font-medium">
+                                      <td className="text-base font-medium text-qblack line-clamp-1">
                                         {address.country.name}
                                       </td>
                                     </tr>
@@ -758,7 +744,7 @@ function CheakoutPage() {
                                           {langCntnt && langCntnt.State}:
                                         </div>
                                       </td>
-                                      <td className="text-base text-qblack line-clamp-1 font-medium">
+                                      <td className="text-base font-medium text-qblack line-clamp-1">
                                         {address.country_state.name}
                                       </td>
                                     </tr>
@@ -768,7 +754,7 @@ function CheakoutPage() {
                                           {langCntnt && langCntnt.City}:
                                         </div>
                                       </td>
-                                      <td className="text-base text-qblack line-clamp-1 font-medium">
+                                      <td className="text-base font-medium text-qblack line-clamp-1">
                                         {address.city.name}
                                       </td>
                                     </tr>
@@ -776,7 +762,7 @@ function CheakoutPage() {
                                 </table>
                               </div>
                               {address.id === selectedBilling && (
-                                <span className="text-white bg-qpurple px-2 text-sm absolute right-3 rounded -top-2 font-medium">
+                                <span className="absolute px-2 text-sm font-medium text-white rounded bg-qpurple right-3 -top-2">
                                   {langCntnt && langCntnt.Selected}
                                 </span>
                               )}
@@ -786,7 +772,7 @@ function CheakoutPage() {
                     ) : (
                       <div
                         data-aos="zoom-in"
-                        className="grid sm:grid-cols-2 grid-cols-1 gap-3"
+                        className="grid grid-cols-1 gap-3 sm:grid-cols-2"
                       >
                         {addresses &&
                           addresses.length > 0 &&
@@ -805,7 +791,7 @@ function CheakoutPage() {
                                   : "border-transparent bg-primarygray"
                               }`}
                             >
-                              <div className="flex justify-between items-center">
+                              <div className="flex items-center justify-between">
                                 <p className="title text-[22px] font-semibold">
                                   {langCntnt && langCntnt.Address} #{i + 1}
                                 </p>
@@ -840,7 +826,7 @@ function CheakoutPage() {
                                       <td className="text-base text-qgray w-[70px] block line-clamp-1">
                                         <p>{langCntnt && langCntnt.Name}:</p>
                                       </td>
-                                      <td className="text-base text-qblack line-clamp-1 font-medium">
+                                      <td className="text-base font-medium text-qblack line-clamp-1">
                                         {address.name}
                                       </td>
                                     </tr>
@@ -848,7 +834,7 @@ function CheakoutPage() {
                                       <td className="text-base text-qgray w-[70px] block line-clamp-1">
                                         <p>{langCntnt && langCntnt.Email}:</p>
                                       </td>
-                                      <td className="text-base text-qblack line-clamp-1 font-medium">
+                                      <td className="text-base font-medium text-qblack line-clamp-1">
                                         {address.email}
                                       </td>
                                     </tr>
@@ -856,7 +842,7 @@ function CheakoutPage() {
                                       <td className="text-base text-qgray w-[70px] block line-clamp-1">
                                         <p>{langCntnt && langCntnt.phone}:</p>
                                       </td>
-                                      <td className="text-base text-qblack line-clamp-1 font-medium">
+                                      <td className="text-base font-medium text-qblack line-clamp-1">
                                         {address.phone}
                                       </td>
                                     </tr>
@@ -864,7 +850,7 @@ function CheakoutPage() {
                                       <td className="text-base text-qgray w-[70px] block line-clamp-1">
                                         <p>{langCntnt && langCntnt.Country}:</p>
                                       </td>
-                                      <td className="text-base text-qblack line-clamp-1 font-medium">
+                                      <td className="text-base font-medium text-qblack line-clamp-1">
                                         {address.country.name}
                                       </td>
                                     </tr>
@@ -872,7 +858,7 @@ function CheakoutPage() {
                                       <td className="text-base text-qgray w-[70px] block line-clamp-1">
                                         <p>{langCntnt && langCntnt.State}:</p>
                                       </td>
-                                      <td className="text-base text-qblack line-clamp-1 font-medium">
+                                      <td className="text-base font-medium text-qblack line-clamp-1">
                                         {address.country_state.name}
                                       </td>
                                     </tr>
@@ -880,7 +866,7 @@ function CheakoutPage() {
                                       <td className="text-base text-qgray w-[70px] block line-clamp-1">
                                         <p>{langCntnt && langCntnt.City}:</p>
                                       </td>
-                                      <td className="text-base text-qblack line-clamp-1 font-medium">
+                                      <td className="text-base font-medium text-qblack line-clamp-1">
                                         {address.city.name}
                                       </td>
                                     </tr>
@@ -888,7 +874,7 @@ function CheakoutPage() {
                                 </table>
                               </div>
                               {address.id === selectedShipping && (
-                                <span className="text-white rounded bg-qpurple px-2 text-sm absolute right-3 -top-2 font-medium">
+                                <span className="absolute px-2 text-sm font-medium text-white rounded bg-qpurple right-3 -top-2">
                                   {langCntnt && langCntnt.Selected}
                                 </span>
                               )}
@@ -900,17 +886,17 @@ function CheakoutPage() {
                 )}
                 {newAddress && (
                   <div data-aos="zoom-in" className="w-full">
-                    <div className="flex justify-between items-center">
-                      <h1 className="sm:text-2xl text-xl text-qblack font-medium mb-5">
+                    <div className="flex items-center justify-between">
+                      <h1 className="mb-5 text-xl font-medium sm:text-2xl text-qblack">
                         {langCntnt && langCntnt.Add_New_Address}
                       </h1>
                       <span
                         onClick={() => setNewAddress(!newAddress)}
-                        className="text-qpurple cursor-pointer"
+                        className="cursor-pointer text-qpurple"
                       >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
-                          className="h-5 w-5"
+                          className="w-5 h-5"
                           viewBox="0 0 20 20"
                           fill="currentColor"
                         >
@@ -925,8 +911,8 @@ function CheakoutPage() {
                     <div className="form-area bg-[#F8F8F8] md:p-[40px] p-2.5">
                       <form>
                         <div className="mb-6">
-                          <div className="sm:flex sm:space-x-5 items-center">
-                            <div className="sm:w-1/2 w-full  mb-5 sm:mb-0">
+                          <div className="items-center sm:flex sm:space-x-5">
+                            <div className="w-full mb-5 sm:w-1/2 sm:mb-0">
                               <InputCom
                                 label={langCntnt && langCntnt.First_Name + "*"}
                                 placeholder={langCntnt && langCntnt.First_Name}
@@ -938,7 +924,7 @@ function CheakoutPage() {
                                 }
                               />
                             </div>
-                            <div className="sm:w-1/2 w-full">
+                            <div className="w-full sm:w-1/2">
                               <InputCom
                                 label={langCntnt && langCntnt.Last_Name + "*"}
                                 placeholder={langCntnt && langCntnt.Last_name}
@@ -952,7 +938,7 @@ function CheakoutPage() {
                             </div>
                           </div>
                           {errors && Object.hasOwn(errors, "name") ? (
-                            <span className="text-sm mt-1 text-qred">
+                            <span className="mt-1 text-sm text-qred">
                               {errors.name[0]}
                             </span>
                           ) : (
@@ -960,8 +946,8 @@ function CheakoutPage() {
                           )}
                         </div>
 
-                        <div className="flex space-x-5 items-center mb-6">
-                          <div className="sm:w-1/2 w-full">
+                        <div className="flex items-center mb-6 space-x-5">
+                          <div className="w-full sm:w-1/2">
                             <InputCom
                               label={langCntnt && langCntnt.Email_Address + "*"}
                               placeholder={langCntnt && langCntnt.Email}
@@ -973,14 +959,14 @@ function CheakoutPage() {
                               }
                             />
                             {errors && Object.hasOwn(errors, "email") ? (
-                              <span className="text-sm mt-1 text-qred">
+                              <span className="mt-1 text-sm text-qred">
                                 {errors.email[0]}
                               </span>
                             ) : (
                               ""
                             )}
                           </div>
-                          <div className="sm:w-1/2 w-full">
+                          <div className="w-full sm:w-1/2">
                             <InputCom
                               label={langCntnt && langCntnt.Phone_Number + "*"}
                               placeholder="012 3  *******"
@@ -992,7 +978,7 @@ function CheakoutPage() {
                               }
                             />
                             {errors && Object.hasOwn(errors, "phone") ? (
-                              <span className="text-sm mt-1 text-qred">
+                              <span className="mt-1 text-sm text-qred">
                                 {errors.phone[0]}
                               </span>
                             ) : (
@@ -1019,7 +1005,7 @@ function CheakoutPage() {
                             >
                               {({ item }) => (
                                 <>
-                                  <div className="flex justify-between items-center w-full">
+                                  <div className="flex items-center justify-between w-full">
                                     <div>
                                       <span className="text-[13px] text-qblack">
                                         {item}
@@ -1045,14 +1031,14 @@ function CheakoutPage() {
                             </Selectbox>
                           </div>
                           {errors && Object.hasOwn(errors, "country") ? (
-                            <span className="text-sm mt-1 text-qred">
+                            <span className="mt-1 text-sm text-qred">
                               {errors.country[0]}
                             </span>
                           ) : (
                             ""
                           )}
                         </div>
-                        <div className="flex space-x-5 items-center mb-6">
+                        <div className="flex items-center mb-6 space-x-5">
                           <div className="w-1/2">
                             <h1 className="input-label capitalize block  mb-2 text-qgray text-[13px] font-normal">
                               {langCntnt && langCntnt.State}*
@@ -1072,7 +1058,7 @@ function CheakoutPage() {
                               >
                                 {({ item }) => (
                                   <>
-                                    <div className="flex justify-between items-center w-full">
+                                    <div className="flex items-center justify-between w-full">
                                       <div>
                                         <span className="text-[13px] text-qblack">
                                           {item}
@@ -1098,7 +1084,7 @@ function CheakoutPage() {
                               </Selectbox>
                             </div>
                             {errors && Object.hasOwn(errors, "state") ? (
-                              <span className="text-sm mt-1 text-qred">
+                              <span className="mt-1 text-sm text-qred">
                                 {errors.state[0]}
                               </span>
                             ) : (
@@ -1124,7 +1110,7 @@ function CheakoutPage() {
                               >
                                 {({ item }) => (
                                   <>
-                                    <div className="flex justify-between items-center w-full">
+                                    <div className="flex items-center justify-between w-full">
                                       <div>
                                         <span className="text-[13px] text-qblack">
                                           {item}
@@ -1150,7 +1136,7 @@ function CheakoutPage() {
                               </Selectbox>
                             </div>
                             {errors && Object.hasOwn(errors, "city") ? (
-                              <span className="text-sm mt-1 text-qred">
+                              <span className="mt-1 text-sm text-qred">
                                 {errors.city[0]}
                               </span>
                             ) : (
@@ -1158,7 +1144,7 @@ function CheakoutPage() {
                             )}
                           </div>
                         </div>
-                        <div className=" mb-6">
+                        <div className="mb-6 ">
                           <div className="w-full">
                             <InputCom
                               value={address}
@@ -1173,7 +1159,7 @@ function CheakoutPage() {
                               }
                             />
                             {errors && Object.hasOwn(errors, "address") ? (
-                              <span className="text-sm mt-1 text-qred">
+                              <span className="mt-1 text-sm text-qred">
                                 {errors.address[0]}
                               </span>
                             ) : (
@@ -1182,8 +1168,8 @@ function CheakoutPage() {
                           </div>
                         </div>
 
-                        <div className="flex space-x-5 items-center ">
-                          <div className="flex space-x-2 items-center mb-10">
+                        <div className="flex items-center space-x-5 ">
+                          <div className="flex items-center mb-10 space-x-2">
                             <div>
                               <input
                                 checked={home}
@@ -1204,7 +1190,7 @@ function CheakoutPage() {
                               {langCntnt && langCntnt.home}
                             </label>
                           </div>
-                          <div className="flex space-x-2 items-center mb-10">
+                          <div className="flex items-center mb-10 space-x-2">
                             <div>
                               <input
                                 checked={office}
@@ -1231,7 +1217,7 @@ function CheakoutPage() {
                           type="button"
                           className="w-full h-[50px]"
                         >
-                          <div className="green-btn rounded-full">
+                          <div className="rounded-full green-btn">
                             <span className="text-sm text-white">
                               {langCntnt && langCntnt.Save_Address}
                             </span>
@@ -1253,7 +1239,7 @@ function CheakoutPage() {
 
               <div className="flex-1">
                 <div className="mb-10">
-                  <h1 className="sm:text-2xl text-xl text-qblack font-medium mt-5 mb-5">
+                  <h1 className="mt-5 mb-5 text-xl font-medium sm:text-2xl text-qblack">
                     {langCntnt && langCntnt.Apply_Coupon}
                   </h1>
                   <div className="discount-code rounded overflow-hidden  w-full mb-5 sm:mb-0 h-[50px] flex ">
@@ -1271,20 +1257,20 @@ function CheakoutPage() {
                       className="w-[90px] h-[50px]"
                     >
                       <div className="green-btn">
-                        <span className="text-sm text-white  font-semibold">
+                        <span className="text-sm font-semibold text-white">
                           {langCntnt && langCntnt.Apply}
                         </span>
                       </div>
                     </button>
                   </div>
                 </div>
-                <h1 className="sm:text-2xl text-xl text-qblack font-medium mt-5 mb-5">
+                <h1 className="mt-5 mb-5 text-xl font-medium sm:text-2xl text-qblack">
                   {langCntnt && langCntnt.Order_Summary}
                 </h1>
 
                 <div className="w-full px-10 py-[30px] rounded border border-qpurplelow/10">
-                  <div className="sub-total mb-6">
-                    <div className=" flex justify-between mb-5">
+                  <div className="mb-6 sub-total">
+                    <div className="flex justify-between mb-5 ">
                       <p className="text-[13px] font-medium text-qblack uppercase">
                         {langCntnt && langCntnt.Product}
                       </p>
@@ -1296,50 +1282,48 @@ function CheakoutPage() {
                   </div>
                   <div className="product-list w-full mb-[30px]">
                     <ul className="flex flex-col space-y-5">
-                      {carts &&
-                        carts.length > 0 &&
-                        carts.map((item) => (
-                          <li key={item.id}>
-                            <div className="flex justify-between items-center">
-                              <div>
-                                <h4
-                                  title={item.product.name}
-                                  className="text-[15px] text-qblack line-clamp-1 mb-2.5"
-                                >
-                                  {wordCount(`${item.product.name}`)}
-                                  <sup className="text-[13px] text-qgray ml-2 mt-2">
-                                    x{parseInt(item.qty)}
-                                  </sup>
-                                </h4>
-                                <p className="text-[13px] text-qgray line-clamp-1">
-                                  {item.variants.length !== 0 &&
-                                    item.variants.map((variant, i) => (
-                                      <span key={i}>
-                                        {variant.variant_item &&
-                                          variant.variant_item.name}
-                                      </span>
-                                    ))}
-                                </p>
-                              </div>
-                              <div>
-                                <span
-                                  suppressHydrationWarning
-                                  className="text-[15px] text-qblack font-medium"
-                                >
-                                  <CheckProductIsExistsInFlashSale
-                                    id={item.product_id}
-                                    price={price(item)}
-                                  />
-                                </span>
-                              </div>
+                      {products.map((item) => (
+                        <li key={item.id}>
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <h4
+                                title={item.title}
+                                className="text-[15px] text-qblack line-clamp-1 mb-2.5"
+                              >
+                                {wordCount(`${item.title}`)}
+                                <sup className="text-[13px] text-qgray ml-2 mt-2">
+                                  x{parseInt(item.quantity)}
+                                </sup>
+                              </h4>
+                              <p className="text-[13px] text-qgray line-clamp-1">
+                                {item.variants.length !== 0 &&
+                                  item.variants.map((variant, i) => (
+                                    <span key={i}>
+                                      {variant.variant_item &&
+                                        variant.variant_item.name}
+                                    </span>
+                                  ))}
+                              </p>
                             </div>
-                          </li>
-                        ))}
+                            <div>
+                              <span
+                                suppressHydrationWarning
+                                className="text-[15px] text-qblack font-medium"
+                              >
+                                <CheckProductIsExistsInFlashSale
+                                  id={item.id}
+                                  price={item.price}
+                                />
+                              </span>
+                            </div>
+                          </div>
+                        </li>
+                      ))}
                     </ul>
                   </div>
                   <div className="w-full h-[1px] bg-qpurplelow/10"></div>
                   <div className="mt-[20px]">
-                    <div className=" flex justify-between mb-5">
+                    <div className="flex justify-between mb-5 ">
                       <p className="text-[13px] text-qblack uppercase font-bold">
                         {langCntnt && langCntnt.SUBTOTAL}
                       </p>
@@ -1352,7 +1336,7 @@ function CheakoutPage() {
                           : parseFloat(totalPrice).toFixed(2)}
                       </p>
                     </div>
-                    <div className=" flex justify-between mb-5">
+                    <div className="flex justify-between mb-5 ">
                       <p className="text-[13px] text-qblack uppercase font-bold">
                         {langCntnt && langCntnt.Discount_coupon} (-)
                       </p>
@@ -1367,7 +1351,7 @@ function CheakoutPage() {
                       </p>
                     </div>
                   </div>
-                  <div className="shipping mb-6 mt-6">
+                  <div className="mt-6 mb-6 shipping">
                     <span className="text-[15px] font-medium text-qblack mb-[18px] block">
                       {langCntnt && langCntnt.Shipping} (+)
                     </span>
@@ -1383,7 +1367,7 @@ function CheakoutPage() {
                                   <>
                                     {parseInt(rule.condition_to) >=
                                     parseInt(totalPrice) ? (
-                                      <div className="flex justify-between items-center">
+                                      <div className="flex items-center justify-between">
                                         <div className="flex space-x-2.5 items-center">
                                           <div className="input-radio">
                                             <input
@@ -1413,7 +1397,7 @@ function CheakoutPage() {
                                         </span>
                                       </div>
                                     ) : parseInt(rule.condition_to) === -1 ? (
-                                      <div className="flex justify-between items-center">
+                                      <div className="flex items-center justify-between">
                                         <div className="flex space-x-2.5 items-center">
                                           <div className="input-radio">
                                             <input
@@ -1455,7 +1439,7 @@ function CheakoutPage() {
                                   <>
                                     {parseInt(rule.condition_to) >=
                                     parseInt(totalWeight) ? (
-                                      <div className="flex justify-between items-center">
+                                      <div className="flex items-center justify-between">
                                         <div className="flex space-x-2.5 items-center">
                                           <div className="input-radio">
                                             <input
@@ -1485,7 +1469,7 @@ function CheakoutPage() {
                                         </span>
                                       </div>
                                     ) : parseInt(rule.condition_to) === -1 ? (
-                                      <div className="flex justify-between items-center">
+                                      <div className="flex items-center justify-between">
                                         <div className="flex space-x-2.5 items-center">
                                           <div className="input-radio">
                                             <input
@@ -1525,7 +1509,7 @@ function CheakoutPage() {
                                 {parseInt(rule.condition_from) <= totalQty && (
                                   <>
                                     {parseInt(rule.condition_to) >= totalQty ? (
-                                      <div className="flex justify-between items-center">
+                                      <div className="flex items-center justify-between">
                                         <div className="flex space-x-2.5 items-center">
                                           <div className="input-radio">
                                             <input
@@ -1555,7 +1539,7 @@ function CheakoutPage() {
                                         </span>
                                       </div>
                                     ) : parseInt(rule.condition_to) == -1 ? (
-                                      <div className="flex justify-between items-center">
+                                      <div className="flex items-center justify-between">
                                         <div className="flex space-x-2.5 items-center">
                                           <div className="input-radio">
                                             <input
@@ -1598,8 +1582,8 @@ function CheakoutPage() {
                     </div>
                   </div>
                   <div className="mt-[30px]">
-                    <div className=" flex justify-between mb-5">
-                      <p className="text-2xl font-medium text-qblack capitalize">
+                    <div className="flex justify-between mb-5 ">
+                      <p className="text-2xl font-medium capitalize text-qblack">
                         {langCntnt && langCntnt.total}
                       </p>
                       <p
@@ -1629,7 +1613,7 @@ function CheakoutPage() {
                               `}
                           >
                             <div className="w-full">
-                              <span className="text-qblack font-bold text-base">
+                              <span className="text-base font-bold text-qblack">
                                 {langCntnt && langCntnt.Cash_On_Delivery}
                               </span>
                             </div>
@@ -1640,7 +1624,7 @@ function CheakoutPage() {
                               >
                                 <svg
                                   xmlns="http://www.w3.org/2000/svg"
-                                  className="h-6 w-6"
+                                  className="w-6 h-6"
                                   viewBox="0 0 20 20"
                                   fill="currentColor"
                                 >
@@ -1664,7 +1648,7 @@ function CheakoutPage() {
                                 : "border border-qpurplelow/10"
                             }`}
                           >
-                            <div className="w-full flex justify-center">
+                            <div className="flex justify-center w-full">
                               <span>
                                 <svg
                                   xmlns="http://www.w3.org/2000/svg"
@@ -1690,7 +1674,7 @@ function CheakoutPage() {
                               >
                                 <svg
                                   xmlns="http://www.w3.org/2000/svg"
-                                  className="h-6 w-6"
+                                  className="w-6 h-6"
                                   viewBox="0 0 20 20"
                                   fill="currentColor"
                                 >
@@ -1714,7 +1698,7 @@ function CheakoutPage() {
                                 : "border border-qpurplelow/10"
                             }`}
                           >
-                            <div className="w-full flex justify-center">
+                            <div className="flex justify-center w-full">
                               <span>
                                 <img
                                   src={`/images/remita-logo-svg.svg`}
@@ -1731,7 +1715,7 @@ function CheakoutPage() {
                               >
                                 <svg
                                   xmlns="http://www.w3.org/2000/svg"
-                                  className="h-6 w-6"
+                                  className="w-6 h-6"
                                   viewBox="0 0 20 20"
                                   fill="currentColor"
                                 >
@@ -1749,10 +1733,10 @@ function CheakoutPage() {
                     </div>
                   </div>
                   {selectPayment === "bankpayment" && (
-                    <div className="w-full bank-inputs mt-5">
-                      <div className="input-item mb-5">
-                        <div className="bank-info-alert w-full p-5 bg-amber-100 rounded mb-4 overflow-x-scroll">
-                          <pre className="w-full table table-fixed">
+                    <div className="w-full mt-5 bank-inputs">
+                      <div className="mb-5 input-item">
+                        <div className="w-full p-5 mb-4 overflow-x-scroll rounded bank-info-alert bg-amber-100">
+                          <pre className="table w-full table-fixed">
                             {bankInfo.account_info}
                           </pre>
                         </div>
@@ -1778,7 +1762,7 @@ function CheakoutPage() {
                     className="w-full"
                   >
                     <div className="w-full h-[50px] flex justify-center items-center">
-                      <div className="transition-common bg-qpurple hover:bg-qpurplelow/10 hover:text-qpurple border border-transparent hover:border-qpurple text-white w-full h-full flex justify-center items-center rounded">
+                      <div className="flex items-center justify-center w-full h-full text-white border border-transparent rounded transition-common bg-qpurple hover:bg-qpurplelow/10 hover:text-qpurple hover:border-qpurple">
                         <span className="text-sm font-semibold">
                           {langCntnt && langCntnt.Place_Order_Now}
                         </span>
@@ -1795,7 +1779,7 @@ function CheakoutPage() {
   } else {
     return (
       <div className="checkout-page-wrapper w-full bg-white pb-[120px]">
-        <div className="w-full md:block hidden mb-5">
+        <div className="hidden w-full mb-5 md:block">
           <PageTitle
             title={langCntnt && langCntnt.checkout}
             breadcrumb={[
