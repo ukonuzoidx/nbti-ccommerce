@@ -1,25 +1,25 @@
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-toastify";
+import isAuth from "../../../Middleware/isAuth";
+import apiRequest from "../../../utils/apiRequest";
+import auth from "../../../utils/auth";
+import languageModel from "../../../utils/languageModel";
+import { fetchCart } from "../../store/Cart";
 import BreadcrumbCom from "../BreadcrumbCom";
 import EmptyCardError from "../EmptyCardError";
 import PageTitle from "../Helpers/PageTitle";
 import ProductsTable from "./ProductsTable";
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import auth from "../../../utils/auth";
-import apiRequest from "../../../utils/apiRequest";
-import { toast } from "react-toastify";
-import { fetchCart } from "../../store/Cart";
-import Link from "next/link";
-import isAuth from "../../../Middleware/isAuth";
-import languageModel from "../../../utils/languageModel";
 
 function CardPage() {
   const dispatch = useDispatch();
-  const { cart } = useSelector((state) => state.cart);
-  const [getCarts, setGetCarts] = useState(null);
+  const { products } = useSelector((state) => state.cart);
   const [langCntnt, setLangCntnt] = useState(null);
   useEffect(() => {
     setLangCntnt(languageModel());
   }, []);
+
   const deleteItem = (id) => {
     if (auth()) {
       apiRequest
@@ -40,21 +40,7 @@ function CardPage() {
       return false;
     }
   };
-  useEffect(() => {
-    if (cart && cart.cartProducts.length > 0) {
-      const cartsItems = cart.cartProducts.map((item) => {
-        return {
-          ...item,
-          totalPrice: item.product.offer_price
-            ? item.product.offer_price * parseInt(item.qty)
-            : item.product.price * parseInt(item.qty),
-        };
-      });
-      setGetCarts(cartsItems);
-    } else {
-      setGetCarts([]);
-    }
-  }, [cart]);
+
   const calCPriceDependQunatity = (id, qyt) => {
     setGetCarts(
       getCarts &&
@@ -72,18 +58,21 @@ function CardPage() {
         })
     );
   };
+
   const serverReqIncreseQty = (id) => {
     if (auth()) {
       apiRequest.incrementQyt(id, auth().access_token);
       dispatch(fetchCart());
     }
   };
+
   const serverReqDecreseQyt = (id) => {
     if (auth()) {
       apiRequest.decrementQyt(id, auth().access_token);
       dispatch(fetchCart());
     }
   };
+
   const clearCart = async () => {
     if (auth()) {
       setGetCarts([]);
@@ -98,7 +87,7 @@ function CardPage() {
 
   return (
     <>
-      {getCarts && getCarts.length === 0 ? (
+      {products.length === 0 ? (
         <div className="cart-page-wrapper w-full pt-[60px] pb-[114px]">
           <div className="container-x mx-auto">
             <BreadcrumbCom

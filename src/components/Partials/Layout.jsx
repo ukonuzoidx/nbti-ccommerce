@@ -1,24 +1,16 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import DefaultUser from "../../contexts/DefaultUser";
 import Drawer from "../Mobile/Drawer";
 import Footer from "./Footers/Footer";
 import Header from "./Headers/Header";
-import DefaultUser from "../../contexts/DefaultUser";
 export default function Layout({ children, childrenClasses }) {
   const { websiteSetup } = useSelector((state) => state.websiteSetup);
   const [settings, setSettings] = useState(null);
   const [subscribeData, setSubScribeDAta] = useState(null);
   const [contact, setContact] = useState(null);
-  const [defaultUser, setDefaultUser] = useState(null);
-  useEffect(() => {
-    const defaultUser = JSON.parse(localStorage.getItem("active-user"));
-    setDefaultUser(defaultUser);
-  }, []);
-  const updateDefaultUserDate = () => {
-    const defaultUser = JSON.parse(localStorage.getItem("active-user"));
-    setDefaultUser(defaultUser);
-  };
+  const [defaultUser, setDefaultUser] = useState(true);
 
   useEffect(() => {
     if (!subscribeData) {
@@ -52,9 +44,7 @@ export default function Layout({ children, childrenClasses }) {
   return (
     <>
       <Drawer open={drawer} action={() => setDrawer(!drawer)} />
-      <DefaultUser.Provider
-        value={{ user: defaultUser, handler: updateDefaultUserDate }}
-      >
+      <DefaultUser.Provider value={{ user: defaultUser, handler: defaultUser }}>
         <div className="w-full overflow-x-hidden">
           <Header
             contact={contact && contact}

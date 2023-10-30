@@ -1,23 +1,23 @@
 import axios from "axios";
 import { useContext, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import languageModel from "../../../utils/languageModel";
 import { fetchCart } from "../../store/Cart";
 import { fetchCompareProducts } from "../../store/compareProduct";
 import { setupAction } from "../../store/websiteSetup";
 import { fetchWishlist } from "../../store/wishlistData";
-import languageModel from "../../../utils/languageModel";
 // import TawkTo from "tawkto-react";
-import LoginContext from "../Contexts/LoginContexts";
-import Script from "next/script";
-import Consent from "../Helpers/Consent";
 import { useRouter } from "next/router";
-import apiRequest from "../../../utils/apiRequest";
+import Script from "next/script";
 import { toast } from "react-toastify";
+import apiRequest from "../../../utils/apiRequest";
 import auth from "../../../utils/auth";
+import hexToRgb from "../../../utils/hexToRgb";
 import LoginWidget from "../Auth/Login/LoginWidget";
 import SignupWidget from "../Auth/Signup/SignupWidget";
 import VerifyWidget from "../Auth/Signup/VerifyWidget";
-import hexToRgb from "../../../utils/hexToRgb";
+import LoginContext from "../Contexts/LoginContexts";
+import Consent from "../Helpers/Consent";
 
 function DefaultLayout({ children }) {
   const router = useRouter();
@@ -63,20 +63,26 @@ function DefaultLayout({ children }) {
   };
   useEffect(() => {
     !websiteSetup ? apiFetch() : false;
-    dispatch(fetchCart());
+    // dispatch(fetchCart());
     dispatch(fetchCompareProducts());
-    const themeColor= JSON.parse(localStorage.getItem('settings'))
-    if(themeColor){
-      const root = document.querySelector(':root');
-      if(themeColor.theme_one && themeColor.theme_two){
-        root.style.setProperty('--primary-color', `${hexToRgb(themeColor?.theme_one)}`);
-        root.style.setProperty('--secondary-color', `${hexToRgb(themeColor?.theme_two)}`);
+    const themeColor = JSON.parse(localStorage.getItem("settings"));
+    if (themeColor) {
+      const root = document.querySelector(":root");
+      if (themeColor.theme_one && themeColor.theme_two) {
+        root.style.setProperty(
+          "--primary-color",
+          `${hexToRgb(themeColor?.theme_one)}`
+        );
+        root.style.setProperty(
+          "--secondary-color",
+          `${hexToRgb(themeColor?.theme_two)}`
+        );
       }
     }
     if (languageModel()) {
       setLoad(true);
     }
-  },[websiteSetup, apiFetch, dispatch]);
+  }, [websiteSetup, apiFetch, dispatch]);
   useEffect(() => {
     if (websiteSetup) {
       let current = new Date();
@@ -102,7 +108,7 @@ function DefaultLayout({ children }) {
   //     });
   //   }
   // }, [twkData]);
- 
+
   const loginActionPopup = () => {
     setPopupView("signup");
   };

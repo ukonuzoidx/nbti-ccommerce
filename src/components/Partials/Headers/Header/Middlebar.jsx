@@ -55,15 +55,13 @@ export default function Middlebar({ className, type, settings }) {
     }
   };
   //cart
-  const { cart } = useSelector((state) => state.cart);
-  const [cartItems, setCartItem] = useState(null);
-  useEffect(() => {
-    cart && setCartItem(cart.cartProducts);
-  }, [cart]);
+  const { products } = useSelector((state) => state.cart);
+
   const [langCntnt, setLangCntnt] = useState(null);
   useEffect(() => {
     setLangCntnt(languageModel());
   }, []);
+
   return (
     <div className={`w-full h-[86px] bg-white ${className}`}>
       <div className="container-x mx-auto h-full">
@@ -180,7 +178,7 @@ export default function Middlebar({ className, type, settings }) {
                       type === 3 ? "bg-qh3-blue text-white" : "bg-qprimary"
                     }`}
                   >
-                    {cartItems ? cartItems.length : 0}
+                    {products.length}
                   </span>
                 </div>
                 <Cart
@@ -197,87 +195,85 @@ export default function Middlebar({ className, type, settings }) {
                   </a>
                 </Link>
               </div> */}
-               {auth ? (
-                  <>
-                    {user && (
-                      <button onClick={profilehandler} type="button">
-                        <div className="flex space-x-4 items-center">
-                          <div className="w-[52px] h-[52px] rounded-full bg-qyellow relative overflow-hidden">
-                            {user && user.image ? (
-                              <Image
-                                layout="fill"
-                                objectFit="cover"
-                                src={
-                                  process.env.NEXT_PUBLIC_BASE_URL + user.image
-                                }
-                                alt="user"
-                              />
-                            ) : (
-                              <Image
-                                layout="fill"
-                                objectFit="cover"
-                                src={
-                                  process.env.NEXT_PUBLIC_BASE_URL +
-                                  defaultImage
-                                }
-                                alt="user"
-                              />
-                            )}
-                          </div>
-                          <div className="flex flex-col space-y-3">
-                            <h3 className="text-md text-qblack font-semibold text-start leading-none">
-                              {user.name}
-                            </h3>
-                            <p className="text-sm text-start text-qgray leading-none">
-                              {user.phone}
-                            </p>
-                          </div>
-                        </div>
-                      </button>
-                    )}
-                  </>
-                ) : (
-                  <Link href="/login" passHref>
-                    <a rel="noopener noreferrer">
-                      <span className="cursor-pointer text-[#6E6D79]">
-                        <ThinPeople className="fill-current" />
-                      </span>
-                    </a>
-                  </Link>
-                )}
-              </div>
-
-              {profile && (
+              {auth ? (
                 <>
-                  <div
-                    onClick={() => setProfile(false)}
-                    className="w-full h-full fixed top-0 left-0 z-30"
-                    style={{ zIndex: "35", margin: "0" }}
-                  ></div>
-                  <div
-                    className="w-[208px] h-[267px] bg-white absolute right-0 top-14 z-40 border-t-[3px] border-qpurple flex flex-col justify-between rounded"
-                    style={{
-                      boxShadow: " 0px 15px 50px 0px rgba(0, 0, 0, 0.14)",
-                    }}
-                  >
-                    <div className="menu-item-area w-full  p-5">
-                      <ul className="w-full  flex flex-col space-y-7">
-                        <li className="text-base text-qgray">
-                          <span className="line-clamp-1">
-                            {langCntnt && langCntnt.Hi},{" "}
-                            {auth && auth.user.name}{" "}
-                          </span>
-                        </li>
-                        <li className="text-base text-qgray cursor-pointer hover:text-qblack hover:font-semibold">
-                          <Link href="/profile#dashboard" passHref>
-                            <a rel="noopener noreferrer">
-                              <span className="capitalize">
-                                {langCntnt && langCntnt.profile}
-                              </span>
-                            </a>
-                          </Link>
-                        </li>
-                        {/* <li className="text-base text-qgray cursor-pointer hover:text-qblack hover:font-semibold">
+                  {user && (
+                    <button onClick={profilehandler} type="button">
+                      <div className="flex space-x-4 items-center">
+                        <div className="w-[52px] h-[52px] rounded-full bg-qyellow relative overflow-hidden">
+                          {user && user.image ? (
+                            <Image
+                              layout="fill"
+                              objectFit="cover"
+                              src={
+                                process.env.NEXT_PUBLIC_BASE_URL + user.image
+                              }
+                              alt="user"
+                            />
+                          ) : (
+                            <Image
+                              layout="fill"
+                              objectFit="cover"
+                              src={
+                                process.env.NEXT_PUBLIC_BASE_URL + defaultImage
+                              }
+                              alt="user"
+                            />
+                          )}
+                        </div>
+                        <div className="flex flex-col space-y-3">
+                          <h3 className="text-md text-qblack font-semibold text-start leading-none">
+                            {user.name}
+                          </h3>
+                          <p className="text-sm text-start text-qgray leading-none">
+                            {user.phone}
+                          </p>
+                        </div>
+                      </div>
+                    </button>
+                  )}
+                </>
+              ) : (
+                <Link href="/login" passHref>
+                  <a rel="noopener noreferrer">
+                    <span className="cursor-pointer text-[#6E6D79]">
+                      <ThinPeople className="fill-current" />
+                    </span>
+                  </a>
+                </Link>
+              )}
+            </div>
+
+            {profile && (
+              <>
+                <div
+                  onClick={() => setProfile(false)}
+                  className="w-full h-full fixed top-0 left-0 z-30"
+                  style={{ zIndex: "35", margin: "0" }}
+                ></div>
+                <div
+                  className="w-[208px] h-[267px] bg-white absolute right-0 top-14 z-40 border-t-[3px] border-qpurple flex flex-col justify-between rounded"
+                  style={{
+                    boxShadow: " 0px 15px 50px 0px rgba(0, 0, 0, 0.14)",
+                  }}
+                >
+                  <div className="menu-item-area w-full  p-5">
+                    <ul className="w-full  flex flex-col space-y-7">
+                      <li className="text-base text-qgray">
+                        <span className="line-clamp-1">
+                          {langCntnt && langCntnt.Hi}, {auth && auth.user.name}{" "}
+                        </span>
+                      </li>
+                      <li className="text-base text-qgray cursor-pointer hover:text-qblack hover:font-semibold">
+                        <Link href="/profile#dashboard" passHref>
+                          <a rel="noopener noreferrer">
+                            <span className="capitalize">
+                              {langCntnt && langCntnt.profile}
+                            </span>
+                          </a>
+                        </Link>
+                      </li>
+                      {/* <li className="text-base text-qgray cursor-pointer hover:text-qblack hover:font-semibold">
                           <Link href="/contact" passHref>
                             <a rel="noopener noreferrer">
                               <span className="capitalize">
@@ -286,29 +282,29 @@ export default function Middlebar({ className, type, settings }) {
                             </a>
                           </Link>
                         </li> */}
-                        <li className="text-base text-qgray cursor-pointer hover:text-qblack hover:font-semibold">
-                          <Link href="/faq" passHref>
-                            <a rel="noopener noreferrer">
-                              <span className="capitalize">
-                                {langCntnt && langCntnt.FAQ}
-                              </span>
-                            </a>
-                          </Link>
-                        </li>
-                      </ul>
-                    </div>
-                    <div className="w-full h-10 flex justify-center items-center border-t border-qborder">
-                      <button
-                        onClick={logout}
-                        type="button"
-                        className="text-qblack text-base font-semibold"
-                      >
-                        {langCntnt && langCntnt.Sign_Out}
-                      </button>
-                    </div>
+                      <li className="text-base text-qgray cursor-pointer hover:text-qblack hover:font-semibold">
+                        <Link href="/faq" passHref>
+                          <a rel="noopener noreferrer">
+                            <span className="capitalize">
+                              {langCntnt && langCntnt.FAQ}
+                            </span>
+                          </a>
+                        </Link>
+                      </li>
+                    </ul>
                   </div>
-                </>
-              )}
+                  <div className="w-full h-10 flex justify-center items-center border-t border-qborder">
+                    <button
+                      onClick={logout}
+                      type="button"
+                      className="text-qblack text-base font-semibold"
+                    >
+                      {langCntnt && langCntnt.Sign_Out}
+                    </button>
+                  </div>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </div>

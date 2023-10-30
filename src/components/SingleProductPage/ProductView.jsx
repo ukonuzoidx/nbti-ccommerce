@@ -1,21 +1,20 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { FacebookShareButton, TwitterShareButton } from "react-share";
-import { toast } from "react-toastify";
 import apiRequest from "../../../utils/apiRequest";
 import auth from "../../../utils/auth";
+import languageModel from "../../../utils/languageModel";
 import settings from "../../../utils/settings";
-import { fetchCart } from "../../store/Cart";
+import { addItemToCart } from "../../store/Cart";
 import { fetchWishlist } from "../../store/wishlistData";
+import LoginContext from "../Contexts/LoginContexts";
+import Selectbox from "../Helpers/Selectbox";
 import Star from "../Helpers/icons/Star";
 import ThinLove from "../Helpers/icons/ThinLove";
-import Selectbox from "../Helpers/Selectbox";
 import CheckProductIsExistsInFlashSale from "../Shared/CheckProductIsExistsInFlashSale";
-import languageModel from "../../../utils/languageModel";
-import LoginContext from "../Contexts/LoginContexts";
 const Redirect = ({ message, linkTxt }) => {
   return (
     <div className="flex space-x-2 items-center">
@@ -141,81 +140,24 @@ export default function ProductView({
   const addToCard = () => {
     const data = {
       id: product.id,
-      token: auth() && auth().access_token,
-      quantity: quantity,
-      variants:
-        getFirstVarients &&
-        getFirstVarients.map((v) => parseInt(v.product_variant_id)),
-      variantItems: getFirstVarients && getFirstVarients.map((v) => v.id),
+      title: product.name,
+      slug: product.slug,
+      image: process.env.NEXT_PUBLIC_BASE_URL + product.thumb_image,
+      price: product.price,
+      offer_price: product.offer_price,
+      campaingn_product: null,
+      review: parseInt(product.averageRating),
+      variants: product.active_variants,
+      quantity,
+      totalPrice: offerPrice,
     };
-    if (auth()) {
-      if (varients) {
-        const variantQuery = data.variants.map((value, index) => {
-          return `variants[]=${value}`;
-        });
-        const variantString = variantQuery.map((value) => value + "&").join("");
 
-        const itemsQuery = data.variantItems.map((value, index) => {
-          return `items[]=${value}`;
-        });
-        const itemQueryStr = itemsQuery.map((value) => value + "&").join("");
-        const uri = `token=${data.token}&product_id=${data.id}&${variantString}${itemQueryStr}quantity=${data.quantity}`;
-        apiRequest
-          .addToCard(uri)
-          .then((res) =>
-            toast.success(
-              <Redirect
-                message={langCntnt && langCntnt.Item_added}
-                linkTxt={langCntnt && langCntnt.Go_To_Cart}
-              />,
-              {
-                autoClose: 5000,
-              }
-            )
-          )
-          .catch((err) => console.log(err));
-        dispatch(fetchCart());
-      } else {
-        const uri = `token=${data.token}&product_id=${data.id}&quantity=${data.quantity}`;
-        apiRequest
-          .addToCard(uri)
-          .then((res) => {
-            toast.success(
-              <Redirect
-                message={langCntnt && langCntnt.Item_added}
-                linkTxt={langCntnt && langCntnt.Go_To_Cart}
-              />,
-              {
-                autoClose: 5000,
-              }
-            );
-            toast.error(
-              res.response &&
-                res.response.data.message &&
-                res.response.data.message
-            );
-          })
-          .catch((err) => {
-            console.log(err);
-            toast.error(
-              err.response &&
-                err.response.data.message &&
-                err.response.data.message
-            );
-          });
-        dispatch(fetchCart());
-      }
-    } else {
-      localStorage.setItem(
-        "data-hold",
-        JSON.stringify({ type: "add-to-cart", ...data })
-      );
-      loginPopupBoard.handlerPopup(true);
+    if (product.id) {
+      dispatch(addItemToCart({ ...data }));
     }
   };
 
   //wishlist
-
   const { wishlistData } = useSelector((state) => state.wishlistData);
   const wishlist = wishlistData && wishlistData.wishlists;
   const wishlisted =

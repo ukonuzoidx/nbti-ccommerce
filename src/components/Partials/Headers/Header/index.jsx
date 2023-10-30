@@ -1,17 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import ThinBag from "../../../Helpers/icons/ThinBag";
 import Middlebar from "./Middlebar";
 import Navbar from "./Navbar";
 
 export default function Header({ drawerAction, settings, contact }) {
-  const { cart } = useSelector((state) => state.cart);
-  const [cartItems, setCartItem] = useState(null);
-  useEffect(() => {
-    cart && setCartItem(cart.cartProducts);
-  }, [cart]);
+  const { products } = useSelector((state) => state.cart);
 
   return (
     <header className="header-section-wrapper relative print:hidden">
@@ -59,7 +54,7 @@ export default function Header({ drawerAction, settings, contact }) {
               </span>
             </Link>
             <span className="w-[18px] h-[18px] rounded-full text-white bg-qpurple absolute -top-2.5 -right-2.5 flex justify-center items-center text-[9px]">
-              {cartItems ? cartItems.length : 0}
+              {products.length}
             </span>
           </div>
         </div>

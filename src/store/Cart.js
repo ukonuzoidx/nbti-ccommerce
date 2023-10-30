@@ -1,46 +1,39 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import auth from "../../utils/auth";
-//constant
-const CART = "CART";
-//intialState
-const initialState = {
-  cart: null,
-  status: null,
-};
-//fetch data from api
-export const fetchCart = createAsyncThunk("CART/fetchCart", async () => {
-  if (auth()) {
-    const res = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}api/cart?token=${
-        auth().access_token
-      }`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
-    const data = await res.json();
-    return data;
-  }
-  return false;
-});
+import { createSlice } from "@reduxjs/toolkit";
+
 //create action and reducer
 export const cart = createSlice({
-  name: CART,
-  initialState,
-  extraReducers: {
-    [fetchCart.pending]: (state, action) => {
-      state.status = "loading";
+  name: "CART",
+  initialState: {
+    products: [],
+  },
+  reducers: {
+    addItemToCart: (state, action) => {
+      const findId = state.products.find(
+        (items) => items.id === action.payload.id
+      );
+      if (findId) {
+        findId.quantity += action.payload.quantity;
+        findId.totalPrice = findId.offer_price * findId.quantity;
+      } else {
+        state.products.push(action.payload);
+      }
     },
-    [fetchCart.fulfilled]: (state, { payload }) => {
-      state.cart = payload;
-      state.status = "success";
+    removeFromCart: (state, action) => {
+      const findId = state.products.find(
+        (items) => items.id === action.payload
+      );
+      if (findId) {
+        const filteredProduct = state.products.filter(
+          (items) => items.id !== action.payload
+        );
+        state.products = filteredProduct;
+      }
     },
-    [fetchCart.rejected]: (state, action) => {
-      state.status = "failed";
+    emptyCart: (state) => {
+      state.products = [];
     },
   },
 });
+// Action creators are generated for each case reducer function
+export const { addItemToCart, removeFromCart, emptyCart } = cart.actions;
 export default cart.reducer;

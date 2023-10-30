@@ -2,23 +2,23 @@ import axios from "axios";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useState, useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import apiRequest from "../../../../utils/apiRequest";
 import auth from "../../../../utils/auth";
+import languageModel from "../../../../utils/languageModel";
 import settings from "../../../../utils/settings";
-import { fetchCart } from "../../../store/Cart";
+import { addItemToCart } from "../../../store/Cart";
 import { fetchCompareProducts } from "../../../store/compareProduct";
 import { fetchWishlist } from "../../../store/wishlistData";
+import LoginContext from "../../Contexts/LoginContexts";
 import CheckProductIsExistsInFlashSale from "../../Shared/CheckProductIsExistsInFlashSale";
 import ProductView from "../../SingleProductPage/ProductView";
 import Compair from "../icons/Compair";
 import QuickViewIco from "../icons/QuickViewIco";
 import Star from "../icons/Star";
 import ThinLove from "../icons/ThinLove";
-import languageModel from "../../../../utils/languageModel";
-import LoginContext from "../../Contexts/LoginContexts";
 const Redirect = ({ message, linkTxt }) => {
   return (
     <div className="flex space-x-2 items-center">
@@ -85,123 +85,22 @@ export default function ProductCardRowStyleOne({ className, datas }) {
       router.push("/login");
     }
   };
-  //cart
-  const varients = datas && datas.variants.length > 0 && datas.variants;
-  const [getFirstVarients, setFirstVarients] = useState(
-    varients && varients.map((v) => v.active_variant_items[0])
-  );
-  const [price, setPrice] = useState(null);
-  const [offerPrice, setOffer] = useState(null);
-  const addToCart = (id) => {
-    const data = {
-      id: id,
-      token: auth() && auth().access_token,
-      quantity: 1,
-      variants:
-        getFirstVarients &&
-        getFirstVarients.length > 0 &&
-        getFirstVarients.map((v) =>
-          v ? parseInt(v.product_variant_id) : null
-        ),
-      variantItems:
-        getFirstVarients &&
-        getFirstVarients.length > 0 &&
-        getFirstVarients.map((v) => (v ? v.id : null)),
-    };
-    if (auth()) {
-      if (varients) {
-        const variantQuery = data.variants.map((value, index) => {
-          return value ? `variants[]=${value}` : `variants[]=-1`;
-        });
-        const variantString = variantQuery.map((value) => value + "&").join("");
 
-        const itemsQuery = data.variantItems.map((value, index) => {
-          return value ? `items[]=${value}` : `items[]=-1`;
-        });
-        const itemQueryStr = itemsQuery.map((value) => value + "&").join("");
-        const uri = `token=${data.token}&product_id=${data.id}&${variantString}${itemQueryStr}quantity=${data.quantity}`;
-        apiRequest
-          .addToCard(uri)
-          .then((res) =>
-            toast.success(
-              <Redirect
-                message={langCntnt && langCntnt.Item_added}
-                linkTxt={langCntnt && langCntnt.Go_To_Cart}
-              />,
-              {
-                autoClose: 5000,
-              }
-            )
-          )
-          .catch((err) => {
-            toast.error(
-              err.response &&
-                err.response.data.message &&
-                err.response.data.message
-            );
-          });
-        dispatch(fetchCart());
-      } else {
-        const uri = `token=${data.token}&product_id=${data.id}&quantity=${data.quantity}`;
-        apiRequest
-          .addToCard(uri)
-          .then((res) =>
-            toast.success(
-              <Redirect
-                message={langCntnt && langCntnt.Item_added}
-                linkTxt={langCntnt && langCntnt.Go_To_Cart}
-              />,
-              {
-                autoClose: 5000,
-              }
-            )
-          )
-          .catch((err) => {
-            toast.error(
-              err.response &&
-                err.response.data.message &&
-                err.response.data.message
-            );
-          });
-        dispatch(fetchCart());
-      }
-    } else {
-      localStorage.setItem(
-        "data-hold",
-        JSON.stringify({ type: "add-to-cart", ...data })
-      );
-      loginPopupBoard.handlerPopup(true);
+  //cart
+  const price = parseFloat(datas.price);
+  const offerPrice = parseFloat(datas.offer_price);
+  const addToCart = (props) => {
+    const data = {
+      ...props,
+      quantity: 1,
+      totalPrice: offerPrice,
+    };
+
+    if (props.id) {
+      dispatch(addItemToCart({ ...data }));
     }
   };
-  useEffect(() => {
-    if (varients) {
-      const prices = varients.map((v) =>
-        v.active_variant_items.length > 0 && v.active_variant_items[0].price
-          ? v.active_variant_items[0].price
-          : 0
-      );
 
-      if (datas.offer_price) {
-        const sumOfferPrice = parseFloat(
-          prices.reduce((prev, curr) => parseInt(prev) + parseInt(curr), 0) +
-            parseFloat(datas.offer_price)
-        );
-        setPrice(datas.price);
-        setOffer(sumOfferPrice);
-      } else {
-        const sumPrice = parseFloat(
-          prices.reduce((prev, curr) => parseInt(prev) + parseInt(curr), 0) +
-            parseFloat(datas.price)
-        );
-        setPrice(sumPrice);
-      }
-    } else {
-      setPrice(datas && datas.price ? parseFloat(datas.price) : null);
-      setOffer(
-        datas && datas.offer_price ? parseFloat(datas.offer_price) : null
-      );
-    }
-  }, [datas, varients]);
   const { currency_icon } = settings();
   /*compare product feature
    * add product for compare method
@@ -349,7 +248,7 @@ export default function ProductCardRowStyleOne({ className, datas }) {
           <div className="w-full h-[48px]">
             <div
               style={{ borderRadius: "30px 0px 0" }}
-              onClick={() => addToCart(datas.id)}
+              onClick={() => addToCart(datas)}
               className="w-[135px] h-[48px] pl-6 pt-3 cursor-pointer bg-qpurplelow/10 group-hover:bg-qpurple absolute -bottom-1 -right-1  rounded transition-all duration-300 ease-in-out"
             >
               <div className="w-full h-full text-qpurple group-hover:text-white">
@@ -380,8 +279,8 @@ export default function ProductCardRowStyleOne({ className, datas }) {
           >
             <span className="w-10 h-10 block overflow-hidden text-qblack hover:text-white justify-center items-center transition-all duration-300 ease-in-out bg-white rounded">
               <span className="w-full h-full flex justify-center items-center hover:bg-qpurple bg-qpurplelow/10">
-               <ThinLove className="fill-current" />
-            </span>
+                <ThinLove className="fill-current" />
+              </span>
             </span>
           </button>
         ) : (
@@ -392,8 +291,8 @@ export default function ProductCardRowStyleOne({ className, datas }) {
           >
             <span className="w-10 h-10 block bg-white overflow-hidden rounded">
               <span className="w-full h-full flex justify-center items-center hover:bg-qpurple bg-qpurplelow/10">
-               <ThinLove fill={true} />
-            </span>
+                <ThinLove fill={true} />
+              </span>
             </span>
           </button>
         )}
@@ -403,9 +302,8 @@ export default function ProductCardRowStyleOne({ className, datas }) {
           onClick={() => productCompare(datas.id)}
         >
           <span className="w-10 h-10 block overflow-hidden justify-center text-qblack hover:text-white transition-all duration-300 ease-in-out items-center bg-white rounded">
-
-             <span className="w-full h-full flex justify-center items-center hover:bg-qpurple bg-qpurplelow/10">
-               <Compair />
+            <span className="w-full h-full flex justify-center items-center hover:bg-qpurple bg-qpurplelow/10">
+              <Compair />
             </span>
           </span>
         </button>
