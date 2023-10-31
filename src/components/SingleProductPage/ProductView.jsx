@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 import { useContext, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { FacebookShareButton, TwitterShareButton } from "react-share";
+import { toast } from "react-toastify";
 import apiRequest from "../../../utils/apiRequest";
 import auth from "../../../utils/auth";
 import languageModel from "../../../utils/languageModel";
@@ -17,10 +18,10 @@ import ThinLove from "../Helpers/icons/ThinLove";
 import CheckProductIsExistsInFlashSale from "../Shared/CheckProductIsExistsInFlashSale";
 const Redirect = ({ message, linkTxt }) => {
   return (
-    <div className="flex space-x-2 items-center">
+    <div className="flex items-center space-x-2">
       <span className="text-sm text-qgray">{message && message}</span>
       <Link href="/cart">
-        <span className="text-xs border-b border-blue-600 text-blue-600 mr-2 cursor-pointer">
+        <span className="mr-2 text-xs text-blue-600 border-b border-blue-600 cursor-pointer">
           {linkTxt && linkTxt}
         </span>
       </Link>
@@ -154,6 +155,7 @@ export default function ProductView({
 
     if (product.id) {
       dispatch(addItemToCart({ ...data }));
+      toast.success("Item added to you cart");
     }
   };
 
@@ -248,7 +250,7 @@ export default function ProductView({
                 objectFit="scale-down"
                 src={`${process.env.NEXT_PUBLIC_BASE_URL + src}`}
                 alt=""
-                className="object-contain  transform scale-110"
+                className="object-contain transform scale-110"
               />
               {product.offer_price && (
                 <div className="w-[80px] h-[80px] rounded-full bg-qpurple text-qblack flex justify-center items-center text-xl font-medium absolute left-[30px] top-[30px]">
@@ -256,7 +258,7 @@ export default function ProductView({
                 </div>
               )}
             </div>
-            <div className="flex gap-2 flex-wrap">
+            <div className="flex flex-wrap gap-2">
               <div
                 onClick={() => changeImgHandler(product.thumb_image)}
                 className="w-[110px] h-[110px] p-[15px] border border-qpurplelow/10 cursor-pointer relative rounded"
@@ -296,18 +298,18 @@ export default function ProductView({
           </div>
         </div>
         <div className="flex-1">
-          <div className="product-details w-full mt-10 lg:mt-0">
+          <div className="w-full mt-10 product-details lg:mt-0">
             {product.brand && (
               <span
                 data-aos="fade-up"
-                className="text-qgray text-xs font-normal uppercase tracking-wider mb-2 inline-block"
+                className="inline-block mb-2 text-xs font-normal tracking-wider uppercase text-qgray"
               >
                 {product.brand.name}
               </span>
             )}
             <h1
               data-aos="fade-up"
-              className="text-xl font-medium text-qblack mb-4"
+              className="mb-4 text-xl font-medium text-qblack"
             >
               {product.name}
             </h1>
@@ -343,7 +345,7 @@ export default function ProductView({
             </div>
             <div
               data-aos="fade-up"
-              className="flex space-x-2 items-baseline mb-7"
+              className="flex items-baseline space-x-2 mb-7"
             >
               <span
                 suppressHydrationWarning
@@ -435,7 +437,7 @@ export default function ProductView({
                       >
                         {({ item }) => (
                           <>
-                            <div className="flex justify-between items-center w-full">
+                            <div className="flex items-center justify-between w-full">
                               <div>
                                 <span className="text-base text-qblack">
                                   {item}
@@ -469,7 +471,7 @@ export default function ProductView({
               className="quantity-card-wrapper w-full flex items-center h-[50px] space-x-[10px] mb-[30px]"
             >
               <div className="w-[120px] h-full px-[26px] flex items-center border border-qpurplelow/10 rounded-md">
-                <div className="flex justify-between items-center w-full">
+                <div className="flex items-center justify-between w-full">
                   <button
                     onClick={decrement}
                     type="button"
@@ -493,7 +495,7 @@ export default function ProductView({
                     type="button"
                     onClick={() => addToWishlist(product.id)}
                   >
-                    <span className="w-10 h-10 flex justify-center items-center">
+                    <span className="flex items-center justify-center w-10 h-10">
                       <ThinLove />
                     </span>
                   </button>
@@ -504,7 +506,7 @@ export default function ProductView({
                       removeToWishlist(wishlisted && wishlisted.id)
                     }
                   >
-                    <span className="w-10 h-10 flex justify-center items-center">
+                    <span className="flex items-center justify-center w-10 h-10">
                       <ThinLove fill={true} />
                     </span>
                   </button>
@@ -514,7 +516,7 @@ export default function ProductView({
                 <button
                   onClick={addToCard}
                   type="button"
-                  className="bg-qpurple hover:bg-qpurplelow/10 hover:text-qpurple border border-transparent hover:border-qpurple transition-common text-white rounded-full text-sm font-semibold w-full h-full"
+                  className="w-full h-full text-sm font-semibold text-white border border-transparent rounded-full bg-qpurple hover:bg-qpurplelow/10 hover:text-qpurple hover:border-qpurple transition-common"
                 >
                   {langCntnt && langCntnt.Add_To_Cart}
                 </button>
@@ -522,20 +524,20 @@ export default function ProductView({
             </div>
 
             <div data-aos="fade-up" className="mb-[20px]">
-              <p className="text-base text-qpurple leading-7">
+              <p className="text-base leading-7 text-qpurple">
                 <span className="text-qblack">
                   {langCntnt && langCntnt.category} :
                 </span>{" "}
                 {product.category.name}
               </p>
-              <p className="text-base text-qpurple leading-7">
-                <span className="text-qblack uppercase">
+              <p className="text-base leading-7 text-qpurple">
+                <span className="uppercase text-qblack">
                   {langCntnt && langCntnt.SKU}:
                 </span>{" "}
                 {product.sku}
               </p>
               {tags && (
-                <p className="text-base text-qpurple leading-7">
+                <p className="text-base leading-7 text-qpurple">
                   <span className="text-qblack">Tags:</span>{" "}
                   {tags.length > 0 &&
                     tags.map((item, i) => (
@@ -567,7 +569,7 @@ export default function ProductView({
               <button
                 type="button"
                 onClick={reportHandler}
-                className="text-qred font-semibold text-base"
+                className="text-base font-semibold text-qred"
               >
                 {langCntnt && langCntnt.Report_This_Item}
               </button>
@@ -575,13 +577,13 @@ export default function ProductView({
 
             <div
               data-aos="fade-up"
-              className="social-share flex  items-center w-full"
+              className="flex items-center w-full social-share"
             >
               <span className="text-qblack text-base mr-[17px] inline-block">
                 {langCntnt && langCntnt.Share_This}:
               </span>
 
-              <div className="flex space-x-5 items-center">
+              <div className="flex items-center space-x-5">
                 <FacebookShareButton
                   url={`${
                     typeof window !== "undefined" &&

@@ -1,14 +1,15 @@
-import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { addItemToCart, removeItemFromCart } from "../../store/Cart";
 export default function InputQuantityCom({ productId, qyt }) {
-  const [quantity, setQuantity] = useState(qyt);
+  const dispatch = useDispatch();
 
   const increment = () => {
-    setQuantity((prev) => prev + 1);
+    dispatch(addItemToCart({ id: productId, quantity: 1 }));
   };
 
   const decrement = () => {
-    if (quantity > 1) {
-      setQuantity((prev) => prev - 1);
+    if (qyt > 1) {
+      dispatch(removeItemFromCart({ id: productId }));
     }
   };
 
@@ -22,7 +23,7 @@ export default function InputQuantityCom({ productId, qyt }) {
         >
           -
         </button>
-        <span className="text-qblack">{quantity}</span>
+        <span className="text-qblack">{qyt}</span>
         <button
           onClick={increment}
           type="button"

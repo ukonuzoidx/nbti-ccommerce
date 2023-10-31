@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import settings from "../../../utils/settings";
 
@@ -7,6 +7,7 @@ function CheckProductIsExistsInFlashSale({
   price,
   sign = true,
   className,
+  setNewPrice,
 }) {
   const { websiteSetup } = useSelector((state) => state.websiteSetup);
   const [flashSale, setData] = useState(null);
@@ -20,6 +21,7 @@ function CheckProductIsExistsInFlashSale({
       });
     }
   }, [websiteSetup]);
+
   const calcProductPrice = (id, price) => {
     // console.log(id, price);
     // console.log(flashSale);
@@ -32,18 +34,21 @@ function CheckProductIsExistsInFlashSale({
         const discountPrice = (offer / 100) * parseFloat(price);
         const mainPrice = parseFloat(price) - discountPrice;
         setPrice(mainPrice);
+        setNewPrice(mainPrice);
       } else {
         setPrice(price);
+        setNewPrice(price);
       }
     } else {
       setPrice(price);
+      setNewPrice(price);
     }
   };
   useEffect(() => {
-    if (id && price) {
+    if (id && price && setNewPrice) {
       calcProductPrice(id, price);
     }
-  });
+  }, [id, price, setNewPrice]);
   const { currency_icon } = settings();
   if (sign) {
     return currency_icon

@@ -5,7 +5,6 @@ import { useDispatch, useSelector } from "react-redux";
 import languageModel from "../../../utils/languageModel";
 import settings from "../../../utils/settings";
 import { removeFromCart } from "../../store/Cart";
-import CheckProductIsExistsInFlashSale from "../Shared/CheckProductIsExistsInFlashSale";
 
 export default function Cart({ className }) {
   const { websiteSetup } = useSelector((state) => state.websiteSetup);
@@ -71,7 +70,15 @@ export default function Cart({ className }) {
             <div className="product-items h-[310px] overflow-y-scroll">
               <ul>
                 {products.map(
-                  ({ image, id, title, price, offer_price, quantity }) => (
+                  ({
+                    image,
+                    id,
+                    title,
+                    price,
+                    offer_price,
+                    quantity,
+                    totalPrice,
+                  }) => (
                     <li key={id} className="flex justify-between w-full h-full">
                       <div className="flex space-x-[6px] justify-center items-center px-4 my-[20px]">
                         <div className="w-[65px] h-full relative">
@@ -92,12 +99,7 @@ export default function Cart({ className }) {
                               suppressHydrationWarning
                               className="offer-price text-qred font-600 text-[15px] ml-2"
                             >
-                              {
-                                <CheckProductIsExistsInFlashSale
-                                  id={id}
-                                  price={offer_price}
-                                />
-                              }
+                              {totalPrice.toFixed(2)}
                             </span>
                           </p>
                           <p>quantity: {quantity}</p>

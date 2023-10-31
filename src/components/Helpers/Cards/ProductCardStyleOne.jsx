@@ -22,10 +22,10 @@ import ThinLove from "../icons/ThinLove";
 
 const Redirect = ({ message, linkTxt }) => {
   return (
-    <div className="flex space-x-2 items-center">
+    <div className="flex items-center space-x-2">
       <span className="text-sm text-qgray">{message && message}</span>
       <Link href="/cart">
-        <span className="text-xs border-b border-blue-600 text-blue-600 mr-2 cursor-pointer">
+        <span className="mr-2 text-xs text-blue-600 border-b border-blue-600 cursor-pointer">
           {linkTxt && linkTxt}
         </span>
       </Link>
@@ -118,17 +118,24 @@ export default function ProductCardStyleOne({ datas }) {
     }
   };
   // cart
-  const price = parseFloat(datas.price);
-  const offerPrice = parseFloat(datas.offer_price);
+  const [newPrice, setNewPrice] = useState(0);
+  const price = datas.price ? parseFloat(datas.price) : null;
+  const offerPrice = datas.offer_price ? parseFloat(datas.offer_price) : null;
+  const handleSetNewPrice = (params) => {
+    setNewPrice(params);
+  };
   const addToCart = (props) => {
+    const { price, offer_price, ...others } = props;
     const data = {
-      ...props,
+      ...others,
       quantity: 1,
-      totalPrice: offerPrice,
+      price: newPrice,
+      totalPrice: newPrice,
     };
 
     if (props.id) {
       dispatch(addItemToCart({ ...data }));
+      toast.success("Item added to you cart");
     }
   };
 
@@ -158,7 +165,7 @@ export default function ProductCardStyleOne({ datas }) {
       className="product-card-one w-full h-[445px] transition-all duration-300 ease-in-out bg-white relative group border border-transparent hover:border-qpurple overflow-hidden rounded-lg"
       style={{ boxShadow: "0px 15px 64px 0px rgba(0, 0, 0, 0.05)" }}
     >
-      <div className="flex flex-col h-full justify-between">
+      <div className="flex flex-col justify-between h-full">
         <div>
           <div className="product-card-img w-full h-[313px]">
             <div className="w-full h-full relative  flex justify-center items-center transition-all duration-700 ease-in-out transform group-hover:-scale-x-[1] scale-x-100">
@@ -168,7 +175,7 @@ export default function ProductCardStyleOne({ datas }) {
                 src={`${imgSrc ? imgSrc : "/assets/images/spinner.gif"}`}
                 alt=""
                 onLoadingComplete={() => loadImg(datas.image)}
-                className="w-full h-full object-contain"
+                className="object-contain w-full h-full"
               />
             </div>
           </div>
@@ -233,6 +240,7 @@ export default function ProductCardStyleOne({ datas }) {
                     <CheckProductIsExistsInFlashSale
                       id={datas.id}
                       price={price}
+                      setNewPrice={handleSetNewPrice}
                     />
                   </>
                 )}
@@ -245,6 +253,7 @@ export default function ProductCardStyleOne({ datas }) {
                   <CheckProductIsExistsInFlashSale
                     id={datas.id}
                     price={offerPrice}
+                    setNewPrice={handleSetNewPrice}
                   />
                 </span>
               )}
@@ -271,8 +280,8 @@ export default function ProductCardStyleOne({ datas }) {
           onClick={() => quickViewHandler(datas.slug)}
           type="button"
         >
-          <span className="w-10 h-10 block overflow-hidden  text-qblack hover:text-white  transition-all duration-300 ease-in-out hover:bg-qpurple bg-white  rounded-full">
-            <span className=" w-full h-full bg-qpurplelow/10 flex justify-center items-center">
+          <span className="block w-10 h-10 overflow-hidden transition-all duration-300 ease-in-out bg-white rounded-full text-qblack hover:text-white hover:bg-qpurple">
+            <span className="flex items-center justify-center w-full h-full bg-qpurplelow/10">
               <QuickViewIco className="fill-current" />
             </span>
           </span>
@@ -283,8 +292,8 @@ export default function ProductCardStyleOne({ datas }) {
             type="button"
             onClick={() => addToWishlist(datas.id)}
           >
-            <span className="w-10 h-10 block text-qblack overflow-hidden hover:text-white transition-all duration-300 ease-in-out bg-white rounded-full">
-              <span className="w-full h-full flex justify-center items-center hover:bg-qpurple bg-qpurplelow/10 ">
+            <span className="block w-10 h-10 overflow-hidden transition-all duration-300 ease-in-out bg-white rounded-full text-qblack hover:text-white">
+              <span className="flex items-center justify-center w-full h-full hover:bg-qpurple bg-qpurplelow/10 ">
                 <ThinLove className="fill-current" />
               </span>
             </span>
@@ -295,8 +304,8 @@ export default function ProductCardStyleOne({ datas }) {
             type="button"
             onClick={() => removeToWishlist(wishlisted && wishlisted.id)}
           >
-            <span className="w-10 block h-10 bg-white rounded-full overflow-hidden">
-              <span className="flex w-full h-full justify-center items-center bg-qpurplelow/10">
+            <span className="block w-10 h-10 overflow-hidden bg-white rounded-full">
+              <span className="flex items-center justify-center w-full h-full bg-qpurplelow/10">
                 <ThinLove fill={true} />
               </span>
             </span>
@@ -308,18 +317,18 @@ export default function ProductCardStyleOne({ datas }) {
           type="button"
           onClick={() => productCompare(datas.id)}
         >
-          <span className="w-10 h-10 block  text-qblack hover:text-white transition-all overflow-hidden duration-300 ease-in-out items-center bg-white rounded-full">
-            <span className="w-full h-full flex justify-center items-center hover:bg-qpurple bg-qpurplelow/10 ">
+          <span className="items-center block w-10 h-10 overflow-hidden transition-all duration-300 ease-in-out bg-white rounded-full text-qblack hover:text-white">
+            <span className="flex items-center justify-center w-full h-full hover:bg-qpurple bg-qpurplelow/10 ">
               <Compair />
             </span>
           </span>
         </button>
       </div>
       {quickViewModal && quickViewData && (
-        <div className="quicke-view-wrapper w-full h-full flex fixed left-0 top-0 justify-center z-50 items-center ">
+        <div className="fixed top-0 left-0 z-50 flex items-center justify-center w-full h-full quicke-view-wrapper ">
           <div
             onClick={() => setQuickView(!quickViewModal)}
-            className="w-full h-full fixed left-0 right-0 bg-black  bg-opacity-25"
+            className="fixed left-0 right-0 w-full h-full bg-black bg-opacity-25"
           ></div>
           <div
             data-aos="fade-up"
@@ -340,7 +349,7 @@ export default function ProductCardStyleOne({ datas }) {
               type="button"
               className="absolute right-3 top-3"
             >
-              <span className="text-red-500 w-12 h-12 flex justify-center items-center rounded border border-qred">
+              <span className="flex items-center justify-center w-12 h-12 text-red-500 border rounded border-qred">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"

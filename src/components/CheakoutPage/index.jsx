@@ -16,7 +16,6 @@ import InputCom from "../Helpers/InputCom";
 import LoaderStyleOne from "../Helpers/Loaders/LoaderStyleOne";
 import PageTitle from "../Helpers/PageTitle";
 import Selectbox from "../Helpers/Selectbox";
-import CheckProductIsExistsInFlashSale from "../Shared/CheckProductIsExistsInFlashSale";
 
 function CheakoutPage() {
   const { websiteSetup } = useSelector((state) => state.websiteSetup);
@@ -62,6 +61,8 @@ function CheakoutPage() {
   const [couponCode, setCouponCode] = useState(null);
   const [bankInfo, setBankInfo] = useState(null);
   const [discountCoupon, setDiscountCoupon] = useState(0);
+  const [totalPrice, setTotalPrice] = useState(0);
+
   useEffect(() => {
     if (couponCode) {
       if (couponCode.offer_type === "2") {
@@ -74,6 +75,14 @@ function CheakoutPage() {
       }
     }
   }, [couponCode, totalPrice]);
+
+  useEffect(() => {
+    const totalPrice = products.reduce(
+      (accumulator, item) => accumulator + item.totalPrice,
+      0
+    );
+    setTotalPrice(totalPrice);
+  }, [products]);
 
   const [transactionInfo, setTransactionInfo] = useState("");
   const [langCntnt, setLangCntnt] = useState(null);
@@ -242,6 +251,8 @@ function CheakoutPage() {
     }
   };
 
+  console.log(discountCoupon);
+
   const getcity = (value) => {
     if (auth() && value) {
       setState(value.id);
@@ -330,7 +341,7 @@ function CheakoutPage() {
     }
   };
 
-  const totalPrice = subTotal && subTotal.reduce((prev, curr) => prev + curr);
+  // const totalPrice = subTotal && subTotal.reduce((prev, curr) => prev + curr);
 
   // useEffect(() => {
   //   if (products && products.length > 0) {
@@ -1310,10 +1321,7 @@ function CheakoutPage() {
                                 suppressHydrationWarning
                                 className="text-[15px] text-qblack font-medium"
                               >
-                                <CheckProductIsExistsInFlashSale
-                                  id={item.id}
-                                  price={item.price}
-                                />
+                                {item.totalPrice.toFixed(2)}
                               </span>
                             </div>
                           </div>

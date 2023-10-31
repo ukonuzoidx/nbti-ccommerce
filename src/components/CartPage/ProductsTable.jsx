@@ -5,10 +5,8 @@ import { useDispatch } from "react-redux";
 import settings from "../../../utils/settings";
 import { removeFromCart } from "../../store/Cart";
 import InputQuantityCom from "../Helpers/InputQuantityCom";
-import CheckProductIsExistsInFlashSale from "../Shared/CheckProductIsExistsInFlashSale";
 
 export default function ProductsTable({ className, cartItems }) {
-  const [storeCarts, setItems] = useState(null);
   const [langCntnt, setLangCntnt] = useState(null);
 
   const { currency_icon } = settings();
@@ -77,12 +75,8 @@ export default function ProductsTable({ className, cartItems }) {
                   <td className="px-2 py-4 text-center">
                     <div className="flex items-center justify-center space-x-1">
                       <span className="text-[15px] text-qblack font-medium">
-                        {
-                          <CheckProductIsExistsInFlashSale
-                            id={item.id}
-                            price={item.price}
-                          />
-                        }
+                        {currency_icon}
+                        {item.price.toFixed(2)}
                       </span>
                     </div>
                   </td>
@@ -102,7 +96,7 @@ export default function ProductsTable({ className, cartItems }) {
                           price={item.totalPrice}
                         /> */}
                         {currency_icon}
-                        {item.totalPrice}
+                        {item.totalPrice.toFixed(2)}
                         {/*{totalPriceCalc(item)}*/}
                       </span>
                     </div>

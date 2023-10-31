@@ -13,9 +13,23 @@ export const cart = createSlice({
       );
       if (findId) {
         findId.quantity += action.payload.quantity;
-        findId.totalPrice = findId.offer_price * findId.quantity;
+        findId.totalPrice += findId.price;
       } else {
         state.products.push(action.payload);
+      }
+    },
+    removeItemFromCart: (state, action) => {
+      const existItem = state.products.find(
+        (item) => item.id === action.payload.id
+      );
+      if (existItem.quantity !== 1) {
+        existItem.quantity -= 1;
+        existItem.totalPrice -= existItem.price;
+      } else {
+        const newData = state.products.filter(
+          (item) => item.id !== existItem.id
+        );
+        state.products = newData;
       }
     },
     removeFromCart: (state, action) => {
@@ -35,5 +49,6 @@ export const cart = createSlice({
   },
 });
 // Action creators are generated for each case reducer function
-export const { addItemToCart, removeFromCart, emptyCart } = cart.actions;
+export const { addItemToCart, removeFromCart, emptyCart, removeItemFromCart } =
+  cart.actions;
 export default cart.reducer;
