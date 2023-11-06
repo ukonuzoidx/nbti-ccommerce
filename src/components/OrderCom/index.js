@@ -1,17 +1,16 @@
 import axios from "axios";
-import Image from "next/image";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import isAuth from "../../../Middleware/isAuth";
 import apiRequest from "../../../utils/apiRequest";
 import auth from "../../../utils/auth";
+import languageModel from "../../../utils/languageModel";
 import settings from "../../../utils/settings";
 import BreadcrumbCom from "../BreadcrumbCom";
 import InputCom from "../Helpers/InputCom";
 import LoaderStyleOne from "../Helpers/Loaders/LoaderStyleOne";
 import StarRating from "../Helpers/StarRating";
-import languageModel from "../../../utils/languageModel";
 import Layout from "../Partials/Layout";
 function OrderCom() {
   const router = useRouter();
@@ -261,7 +260,7 @@ function OrderCom() {
                       <button
                         onClick={print}
                         type="button"
-                        className="w-[161px] h-[52px] rounded flex space-x-2.5 items-center justify-center transition-common bg-qpurple hover:bg-qpurplelow hover:text-qpurple text-white print:hidden mt-5 sm:mt-0"
+                        className="w-[161px] h-[52px] rounded flex space-x-2.5 items-center justify-center transition-common bg-qpurple text-white print:hidden mt-5 sm:mt-0"
                       >
                         <span>
                           <svg

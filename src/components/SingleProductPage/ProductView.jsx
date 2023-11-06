@@ -362,7 +362,7 @@ export default function ProductView({
                     {isProductInFlashSale && (
                       <span className="main-price  font-600 line-through text-qgray text-[15px] mr-2">
                         {currency_icon &&
-                          currency_icon + parseFloat(price).toFixed(2)}
+                          currency_icon + parseFloat(price)}
                       </span>
                     )}
                     <CheckProductIsExistsInFlashSale

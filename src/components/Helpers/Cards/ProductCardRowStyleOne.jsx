@@ -95,17 +95,21 @@ export default function ProductCardRowStyleOne({ className, datas }) {
   };
 
   const addToCart = (props) => {
-    const { price, offer_price, ...others } = props;
-    const data = {
-      ...others,
-      quantity: 1,
-      price: newPrice,
-      totalPrice: newPrice,
-    };
+    if (parseInt(datas.qty) !== 0 && parseInt(datas.qty) > 0) {
+      const { price, offer_price, ...others } = props;
+      const data = {
+        ...others,
+        quantity: 1,
+        price: newPrice,
+        totalPrice: newPrice,
+      };
 
-    if (props.id) {
-      dispatch(addItemToCart({ ...data }));
-      toast.success("Item added to you cart");
+      if (props.id) {
+        dispatch(addItemToCart({ ...data }));
+        toast.success("Item added to you cart");
+      }
+    } else {
+      toast.error(`${langCntnt && langCntnt.Products_not_Available}`);
     }
   };
 

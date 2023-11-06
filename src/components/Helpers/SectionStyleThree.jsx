@@ -19,6 +19,7 @@ export default function SectionStyleThree({
       campaingn_product: null,
       review: parseInt(item.averageRating),
       variants: item.active_variants,
+      qty: item.qty,
     };
   });
   return (

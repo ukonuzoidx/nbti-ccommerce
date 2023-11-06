@@ -10,7 +10,7 @@ import auth from "../../../utils/auth";
 import languageModel from "../../../utils/languageModel";
 import settings from "../../../utils/settings";
 import wordCount from "../../../utils/wordCount";
-import { fetchCart } from "../../store/Cart";
+import { emptyCart } from "../../store/Cart";
 import EmptyCardError from "../EmptyCardError";
 import InputCom from "../Helpers/InputCom";
 import LoaderStyleOne from "../Helpers/Loaders/LoaderStyleOne";
@@ -251,8 +251,6 @@ function CheakoutPage() {
     }
   };
 
-  console.log(discountCoupon);
-
   const getcity = (value) => {
     if (auth() && value) {
       setState(value.id);
@@ -392,6 +390,10 @@ function CheakoutPage() {
   //   }
   // }, [products]);
 
+  const clearCart = async () => {
+    dispatch(emptyCart());
+  };
+
   const [mainTotalPrice, setMainTotalPrice] = useState(null);
 
   useEffect(() => {
@@ -493,6 +495,27 @@ function CheakoutPage() {
     }
   };
 
+  const addToCart = async () => {
+    const data = {
+      token: auth() && auth().access_token,
+      quantity: 1,
+      products: products,
+    };
+
+    const productsString = JSON.stringify(data.products);
+    const uri = `token=${data.token}&product=${encodeURIComponent(
+      productsString
+    )}&quantity=${data.quantity}`;
+    apiRequest
+      .addToCard(uri)
+      .then((res) => {
+        console.log("s");
+        placeOrderHandler();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
   const placeOrderHandler = async () => {
     if (auth()) {
       if (selectedBilling && selectedShipping) {
@@ -513,7 +536,7 @@ function CheakoutPage() {
                   if (res.data) {
                     toast.success(res.data.message);
                     router.push(`/order/${res.data.order_id}`);
-                    dispatch(fetchCart());
+                    // dispatch(fetchCart());
                     localStorage.removeItem("coupon_set_date");
                     localStorage.removeItem("coupon");
                   }
@@ -543,6 +566,7 @@ function CheakoutPage() {
               router.push(url);
               localStorage.removeItem("coupon_set_date");
               localStorage.removeItem("coupon");
+              clearCart();
             } else if (selectPayment && selectPayment === "paystack") {
               const url = `${
                 process.env.NEXT_PUBLIC_BASE_URL
@@ -564,31 +588,7 @@ function CheakoutPage() {
               router.push(url);
               localStorage.removeItem("coupon_set_date");
               localStorage.removeItem("coupon");
-            } else if (selectPayment && selectPayment === "bankpayment") {
-              await apiRequest
-                .bankPayment(
-                  {
-                    shipping_address_id: selectedShipping,
-                    billing_address_id: selectedBilling,
-                    shipping_method_id: parseInt(selectedRule),
-                    tnx_info: transactionInfo,
-                    coupon: couponCode && couponCode.code,
-                  },
-                  auth().access_token
-                )
-                .then((res) => {
-                  if (res.data) {
-                    toast.success(res.data.message);
-                    router.push(`/order/${res.data.order_id}`);
-                    dispatch(fetchCart());
-                    localStorage.removeItem("coupon_set_date");
-                    localStorage.removeItem("coupon");
-                  }
-                })
-                .catch((err) => {
-                  console.log(err);
-                  toast.success(err.response && err.response.message);
-                });
+              clearCart();
             } else {
               toast.error(langCntnt && langCntnt.Select_your_payment_system);
             }
@@ -1709,7 +1709,7 @@ function CheakoutPage() {
                             <div className="flex justify-center w-full">
                               <span>
                                 <img
-                                  src={`/images/remita-logo-svg.svg`}
+                                  src={`/assets/images/remita-logo.png`}
                                   alt=""
                                   height="50"
                                   width="100"
@@ -1766,7 +1766,8 @@ function CheakoutPage() {
                   )}
                   <button
                     type="button"
-                    onClick={placeOrderHandler}
+                    onClick={addToCart}
+                    // onClick={placeOrderHandler}
                     className="w-full"
                   >
                     <div className="w-full h-[50px] flex justify-center items-center">

@@ -80,7 +80,7 @@ export default function Cart({ className }) {
                     totalPrice,
                   }) => (
                     <li key={id} className="flex justify-between w-full h-full">
-                      <div className="flex space-x-[6px] justify-center items-center px-4 my-[20px]">
+                      <div className="flex space-x-[6px] px-4 my-[20px]">
                         <div className="w-[65px] h-full relative">
                           <Image
                             layout="fill"
@@ -89,7 +89,7 @@ export default function Cart({ className }) {
                             className="object-contain w-full h-full"
                           />
                         </div>
-                        <div className="flex flex-col justify-center flex-1 h-full ">
+                        <div className="flex flex-col flex-1 h-full ">
                           <h3 className="title mb-2 text-[13px] font-600 text-qblack leading-4 line-clamp-2 hover:text-qpurple">
                             {title}
                           </h3>
@@ -99,10 +99,10 @@ export default function Cart({ className }) {
                               suppressHydrationWarning
                               className="offer-price text-qred font-600 text-[15px] ml-2"
                             >
-                              {totalPrice.toFixed(2)}
+                              ₦{totalPrice.toFixed(2)}
                             </span>
                           </p>
-                          <p>quantity: {quantity}</p>
+                          {/* <p>quantity: {quantity}</p> */}
                         </div>
                       </div>
                       <span

@@ -117,6 +117,7 @@ export default function ProductCardStyleOne({ datas }) {
       router.push("/login");
     }
   };
+  console.log(parseInt(datas.qty) !== 0 && parseInt(datas.qty) > 0);
   // cart
   const [newPrice, setNewPrice] = useState(0);
   const price = datas.price ? parseFloat(datas.price) : null;
@@ -125,17 +126,21 @@ export default function ProductCardStyleOne({ datas }) {
     setNewPrice(params);
   };
   const addToCart = (props) => {
-    const { price, offer_price, ...others } = props;
-    const data = {
-      ...others,
-      quantity: 1,
-      price: newPrice,
-      totalPrice: newPrice,
-    };
+    if (parseInt(props.qty) !== 0 && parseInt(props.qty) > 0) {
+      const { price, offer_price, qty, ...others } = props;
+      const data = {
+        ...others,
+        quantity: 1,
+        price: newPrice,
+        totalPrice: newPrice,
+      };
 
-    if (props.id) {
-      dispatch(addItemToCart({ ...data }));
-      toast.success("Item added to you cart");
+      if (props.id) {
+        dispatch(addItemToCart({ ...data }));
+        toast.success("Item added to you cart");
+      }
+    } else {
+      toast.error(`${langCntnt && langCntnt.Products_not_Available}`);
     }
   };
 
@@ -162,7 +167,7 @@ export default function ProductCardStyleOne({ datas }) {
   };
   return (
     <div
-      className="product-card-one w-full h-[445px] transition-all duration-300 ease-in-out bg-white relative group border border-transparent hover:border-qpurple overflow-hidden rounded-lg"
+      className="product-card-one w-full h-[520px] transition-all duration-300 ease-in-out bg-white relative group border border-transparent hover:border-qpurple overflow-hidden rounded-lg"
       style={{ boxShadow: "0px 15px 64px 0px rgba(0, 0, 0, 0.05)" }}
     >
       <div className="flex flex-col justify-between h-full">
@@ -257,9 +262,11 @@ export default function ProductCardStyleOne({ datas }) {
                   />
                 </span>
               )}
+              <br />
             </p>
           </div>
         </div>
+        <br />
         {/* add to card button */}
         <div className="">
           <div

@@ -50,7 +50,7 @@ export default function OrderTab({ orders }) {
                   {/*</td>*/}
                   <td className="text-center py-4 px-2">
                     <span className="text-base text-qblack whitespace-nowrap px-2 ">
-                      ${item.total_amount}
+                      ₦{item.total_amount}
                     </span>
                   </td>
                   <td className="py-4 flex justify-center">

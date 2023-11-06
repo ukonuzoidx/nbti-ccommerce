@@ -647,6 +647,10 @@ h6 span {
     /* full width */
     white-space: nowrap;
   }
+  .mobile-visible{
+    display: none;
+    visibility: hidden;
+  }
 }
 
 /* width */
